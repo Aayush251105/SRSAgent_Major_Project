@@ -60,14 +60,16 @@ class RequirementDetector:
 
         elif source_type == "docx":
             for paragraph in document["paragraphs"]:
-                if self.is_requirement(paragraph["text"]):
-                    candidates.append({
-                        "text": paragraph["text"],
-                        "source": {
+                for segment in self._split_text(paragraph["text"]):
+                    if self.is_requirement(segment):
+                        source = {
                             "file_name": document["file_name"],
-                            "paragraph": paragraph["paragraph"],
+                            "paragraph": paragraph.get("paragraph"),
                         }
-                    })
+                        for key in ("table", "row", "column"):
+                            if key in paragraph:
+                                source[key] = paragraph[key]
+                        candidates.append({"text": segment, "source": source})
 
         else:
             raise ValueError(
@@ -78,10 +80,21 @@ class RequirementDetector:
 
     @staticmethod
     def _split_text(text: str) -> List[str]:
-        """Split extracted page text into manageable candidate segments."""
+        """Split extracted text into lines and common list-item segments."""
+        lines = [line.strip() for line in text.splitlines() if line.strip()]
+        segments: List[str] = []
+        for line in lines:
+            pieces = re.split(
+                r"(?<=[.;])\s+(?=(?:REQ[- ]?\d+|\d+(?:\.\d+)*[.)]?|[-*•])\s+)",
+                line,
+            )
+            segments.extend(piece.strip() for piece in pieces if piece.strip())
+        return segments
 
-        return [
-            segment.strip()
-            for segment in re.split(r"\n+", text)
-            if segment.strip()
-        ]
+    def detect_text(self, text: str) -> List[Dict]:
+        """Detect requirements in plain text using the same rules as files."""
+        candidates = []
+        for segment in self._split_text(text):
+            if self.is_requirement(segment):
+                candidates.append({"text": segment, "source": {}})
+        return candidates

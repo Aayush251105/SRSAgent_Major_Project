@@ -11,13 +11,15 @@ class SourceLocation(BaseModel):
     subsection: Optional[str] = None
     page: Optional[int] = None
     paragraph: Optional[int] = None
+    table: Optional[int] = None
+    row: Optional[int] = None
+    column: Optional[int] = None
 
 
 class Requirement(BaseModel):
     """Canonical representation of a single requirement used by downstream agents."""
 
-    requirement_id: str
-    id_source: str = "generated"
+    requirement_id: str = ""
 
     # Original text is preserved exactly for traceability.
     raw_text: str
@@ -52,7 +54,7 @@ class Requirement(BaseModel):
     # Search-oriented representation consumed by the Retrieval Agent.
     retrieval_text: str
 
-    source: SourceLocation
+    source: SourceLocation = Field(default_factory=SourceLocation)
 
 
 class SRSMetadata(BaseModel):

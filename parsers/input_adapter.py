@@ -13,22 +13,23 @@ class InputAdapter:
         ".docx": "docx",
     }
 
-    SUPPORTED_DATA_TYPES = {
-        dict: "json",
-        list: "json",
-        str: "text",
-    }
-
     def detect(self, input_data: Any) -> str:
         """Determine whether the input is a file, JSON object, or plain text."""
 
-        if isinstance(input_data, (dict, list)):
-            return "json"
-
         if isinstance(input_data, str):
+            # Multiline or long text is content, not a candidate filesystem
+            # path. Checking it as a path can fail on Windows path limits.
+            if "\n" in input_data or "\r" in input_data:
+                return "text"
+
             path = Path(input_data)
 
-            if path.exists() and path.is_file():
+            try:
+                is_file = path.exists() and path.is_file()
+            except OSError:
+                is_file = False
+
+            if is_file:
                 extension = path.suffix.lower()
 
                 if extension in self.SUPPORTED_FILE_TYPES:
@@ -37,6 +38,11 @@ class InputAdapter:
                 raise ValueError(f"Unsupported file type: {extension}")
 
             return "text"
+
+        if isinstance(input_data, (dict, list)):
+            raise ValueError(
+                "JSON input is not supported in V1. Pass plain text or a PDF/DOCX file path."
+            )
 
         raise ValueError(
             f"Unsupported input type: {type(input_data).__name__}"

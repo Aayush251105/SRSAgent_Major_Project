@@ -18,6 +18,8 @@ def create_provider(config: LLMConfig):
         )
 
     if config.provider == "grok":
+        if not config.grok_api_key:
+            raise ValueError("Set XAI_API_KEY in SRSAgent/.env to use the Grok provider")
         return GrokProvider(
             model=config.model,
             api_key=config.grok_api_key
@@ -34,9 +36,6 @@ def parse_input(input_data, input_type):
 
     if input_type == "docx":
         return DOCXParser().parse(input_data)
-
-    if input_type == "json":
-        return input_data
 
     if input_type == "text":
         return {
@@ -59,20 +58,24 @@ def main(input_data):
         input_type
     )
 
-    if input_type in {"pdf", "docx"}:
-        detector = RequirementDetector()
+    if input_type == "text" and not document["text"].strip():
+        raise ValueError("Input text is empty")
+    if input_type == "pdf" and not document["text"].strip():
+        raise ValueError(
+            "No selectable text was found in the PDF. Scanned PDFs need OCR, which is not included in V1."
+        )
 
+    detector = RequirementDetector()
+    if input_type in {"pdf", "docx"}:
         candidates = detector.detect(
             document,
             input_type
         )
     else:
-        candidates = [
-            {
-                "text": document["text"],
-                "source": {}
-            }
-        ]
+        candidates = detector.detect_text(document["text"])
+
+    if not candidates:
+        return []
 
     provider = create_provider(config)
 
@@ -86,7 +89,15 @@ def main(input_data):
 
 
 if __name__ == "__main__":
-    result = main("requirements.pdf")
+    import argparse
+    import json
 
-    for requirement in result:
-        print(requirement.model_dump_json(indent=2))
+    parser = argparse.ArgumentParser(description="Extract requirements from SRS text or a PDF/DOCX file.")
+    parser.add_argument("input", help="Plain text, or a path to a .pdf/.docx file")
+    args = parser.parse_args()
+
+    # A single CLI string that names an existing file is treated as a path;
+    # otherwise it is processed as literal plain text.
+    result = main(args.input)
+
+    print(json.dumps([requirement.model_dump(mode="json") for requirement in result], indent=2))

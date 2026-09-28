@@ -21,6 +21,9 @@ class PDFParser:
 
         reader = PdfReader(str(path))
 
+        if reader.is_encrypted:
+            raise ValueError("Encrypted PDFs are not supported")
+
         pages: List[Dict] = []
 
         for page_number, page in enumerate(reader.pages, start=1):
@@ -36,4 +39,5 @@ class PDFParser:
             "file_path": str(path),
             "page_count": len(pages),
             "pages": pages,
+            "text": "\n".join(page["text"] for page in pages),
         }
