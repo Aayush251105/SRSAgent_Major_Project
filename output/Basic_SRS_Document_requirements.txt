@@ -1,21 +1,20 @@
 [
   {
     "requirement_id": "REQ-001",
+    "id_source": "generated",
     "raw_text": "The purpose of this SRS is to clearly describe what the system shall do and the quality attributes it shall maintain. The requirements are written so that they can be understood and tested independently.",
-    "normalized_text": "Clearly describe system functionality and quality attributes",
-    "type": "functional",
-    "title": "System Description and Quality Attributes",
+    "normalized_text": "The requirements are written so that they can be understood and tested independently.",
+    "type": "non-functional",
+    "subtype": "testability",
+    "title": "Requirements Written for Testability",
     "actor": [
-      "system developer",
-      "tester"
+      "writer"
     ],
     "actions": [
-      "describe",
-      "maintain"
+      "write requirements"
     ],
     "entities": [
-      "system",
-      "quality attributes"
+      "requirements"
     ],
     "inputs": [],
     "outputs": [],
@@ -25,15 +24,11 @@
     "constraints": [],
     "error_conditions": [],
     "domain_terms": [
-      "system",
-      "quality attributes"
+      "requirements"
     ],
-    "synonyms": [
-      "requirement",
-      "specification"
-    ],
+    "synonyms": [],
     "sub_requirements": [],
-    "retrieval_text": "system description quality attributes",
+    "retrieval_text": "requirements testing",
     "source": {
       "document_id": null,
       "file_name": "Basic_SRS_Document.docx",
@@ -48,10 +43,12 @@
   },
   {
     "requirement_id": "REQ-002",
+    "id_source": "generated",
     "raw_text": "The system will provide a simple platform through which users can access the application's core functionality, submit information, receive system responses, and maintain relevant records. The initial release focuses on three core functional capabilities: user authentication, data management, and system reporting/feedback.",
-    "normalized_text": "Provide a simple platform for users to access core functionality, submit information, receive system responses, and maintain records.",
+    "normalized_text": "",
     "type": "functional",
-    "title": "Simple Platform for Users",
+    "subtype": "security",
+    "title": "Core Functionality Platform",
     "actor": [
       "user"
     ],
@@ -59,22 +56,20 @@
       "access core functionality",
       "submit information",
       "receive system responses",
-      "maintain records"
+      "maintain relevant records"
     ],
     "entities": [
-      "system",
-      "users",
-      "core functionality",
+      "application",
+      "user",
       "information",
+      "system responses",
       "records"
     ],
     "inputs": [
-      "user input",
-      "information submitted"
+      "user input"
     ],
     "outputs": [
-      "system responses",
-      "maintained records"
+      "system response"
     ],
     "preconditions": [],
     "postconditions": [],
@@ -83,23 +78,20 @@
     "error_conditions": [],
     "domain_terms": [
       "platform",
-      "users",
-      "core functionality",
-      "system responses",
-      "records"
+      "application",
+      "user"
     ],
     "synonyms": [
-      "simple platform",
       "core functionality",
       "system responses",
-      "maintained records"
+      "relevant records"
     ],
     "sub_requirements": [
       "User Authentication",
       "Data Management",
       "System Reporting/Feedback"
     ],
-    "retrieval_text": "simple platform users access core functionality submit information system responses maintain records",
+    "retrieval_text": "users access core functionality submit information receive system responses maintain records",
     "source": {
       "document_id": null,
       "file_name": "Basic_SRS_Document.docx",
@@ -114,51 +106,48 @@
   },
   {
     "requirement_id": "REQ-003",
+    "id_source": "generated",
     "raw_text": "The system is expected to operate on modern desktop and mobile browsers for a web-based deployment. The backend shall run on a supported server or cloud environment with access to the application's database. The final deployment environment may vary according to project needs.",
-    "normalized_text": "The system is expected to operate on modern desktop and mobile browsers for a web-based deployment, and the backend shall run on a supported server or cloud environment with access to the application's database.",
+    "normalized_text": "The system is expected to operate on modern desktop and mobile browsers for a web-based deployment. The backend shall run on a supported server or cloud environment with access to the application's database. The final deployment environment may vary according to project needs.",
     "type": "non-functional",
-    "title": "Deployment Environment",
+    "subtype": "availability",
+    "title": "Web-Based Deployment Support",
     "actor": [
-      "system"
+      "system",
+      "backend"
     ],
     "actions": [
       "operate",
       "run"
     ],
     "entities": [
-      "desktop",
-      "mobile",
-      "browsers",
+      "system",
+      "backend",
       "server",
-      "cloud",
-      "environment",
-      "database"
+      "cloud environment",
+      "database",
+      "application"
     ],
-    "inputs": [
-      "access to application's database"
-    ],
+    "inputs": [],
     "outputs": [],
-    "preconditions": [
-      "web-based deployment"
-    ],
+    "preconditions": [],
     "postconditions": [],
     "conditions": [],
     "constraints": [
-      "project needs"
+      "supported server",
+      "cloud environment"
     ],
     "error_conditions": [],
     "domain_terms": [
+      "web-based deployment",
       "server",
-      "cloud",
-      "database"
+      "cloud environment",
+      "database",
+      "application"
     ],
-    "synonyms": [
-      "deployment environment",
-      "backend",
-      "frontend"
-    ],
+    "synonyms": [],
     "sub_requirements": [],
-    "retrieval_text": "deployment web-based modern desktop mobile browser server cloud database",
+    "retrieval_text": "web-based deployment modern desktop mobile browsers server cloud environment database",
     "source": {
       "document_id": null,
       "file_name": "Basic_SRS_Document.docx",
@@ -173,9 +162,11 @@
   },
   {
     "requirement_id": "REQ-004",
+    "id_source": "generated",
     "raw_text": "The system shall provide a mechanism for users to authenticate before accessing protected functionality.",
-    "normalized_text": "Provide mechanism for user authentication",
+    "normalized_text": "The system shall provide a mechanism for users to authenticate before accessing protected functionality.",
     "type": "functional",
+    "subtype": "interface",
     "title": "User Authentication",
     "actor": [
       "user"
@@ -184,18 +175,15 @@
       "authenticate"
     ],
     "entities": [
-      "user"
+      "user",
+      "functionality"
     ],
     "inputs": [
-      "user credentials"
+      "user"
     ],
-    "outputs": [
-      "access to protected functionality"
-    ],
+    "outputs": [],
     "preconditions": [],
-    "postconditions": [
-      "user is authenticated"
-    ],
+    "postconditions": [],
     "conditions": [],
     "constraints": [],
     "error_conditions": [],
@@ -205,10 +193,10 @@
     ],
     "synonyms": [
       "login",
-      "login mechanism"
+      "access control"
     ],
     "sub_requirements": [],
-    "retrieval_text": "User authentication login mechanism",
+    "retrieval_text": "user authenticate functionality",
     "source": {
       "document_id": null,
       "file_name": "Basic_SRS_Document.docx",
@@ -222,26 +210,25 @@
     }
   },
   {
-    "requirement_id": "REQ-005",
+    "requirement_id": "FR-01.1",
+    "id_source": "source",
     "raw_text": "FR-01.1: The system shall provide a login interface.",
     "normalized_text": "The system shall provide a login interface.",
-    "type": "interface",
+    "type": "functional",
+    "subtype": "interface",
     "title": "Login Interface",
     "actor": [
       "user"
     ],
     "actions": [
-      "provide",
-      "login"
+      "provide"
     ],
     "entities": [
       "system",
-      "interface"
-    ],
-    "inputs": [],
-    "outputs": [
       "login interface"
     ],
+    "inputs": [],
+    "outputs": [],
     "preconditions": [],
     "postconditions": [],
     "conditions": [],
@@ -253,11 +240,11 @@
       "authentication"
     ],
     "synonyms": [
-      "login screen",
-      "login page"
+      "login page",
+      "sign in"
     ],
     "sub_requirements": [],
-    "retrieval_text": "login interface, provide, user",
+    "retrieval_text": "login interface user provide",
     "source": {
       "document_id": null,
       "file_name": "Basic_SRS_Document.docx",
@@ -271,38 +258,54 @@
     }
   },
   {
-    "requirement_id": "REQ-006",
+    "requirement_id": "FR-01.2",
+    "id_source": "source",
     "raw_text": "FR-01.2: The system shall validate submitted credentials.",
     "normalized_text": "The system shall validate submitted credentials.",
     "type": "functional",
+    "subtype": "security",
     "title": "Validate Credentials",
     "actor": [
-      "system"
+      "system",
+      "user"
     ],
     "actions": [
-      "validate"
+      "validate",
+      "submit"
     ],
     "entities": [
-      "credentials"
+      "credentials",
+      "system"
     ],
     "inputs": [
       "submitted credentials"
     ],
-    "outputs": [],
-    "preconditions": [],
-    "postconditions": [],
-    "conditions": [],
+    "outputs": [
+      "validation result"
+    ],
+    "preconditions": [
+      "submitted credentials are provided"
+    ],
+    "postconditions": [
+      "validation result is returned"
+    ],
+    "conditions": [
+      "credentials are valid"
+    ],
     "constraints": [],
-    "error_conditions": [],
+    "error_conditions": [
+      "invalid credentials"
+    ],
     "domain_terms": [
       "authentication",
-      "credentials"
+      "authorization"
     ],
     "synonyms": [
-      "verify credentials"
+      "validate",
+      "authenticate"
     ],
     "sub_requirements": [],
-    "retrieval_text": "validate submitted credentials",
+    "retrieval_text": "system validate submitted credentials",
     "source": {
       "document_id": null,
       "file_name": "Basic_SRS_Document.docx",
@@ -316,11 +319,13 @@
     }
   },
   {
-    "requirement_id": "REQ-007",
+    "requirement_id": "FR-01.3",
+    "id_source": "source",
     "raw_text": "FR-01.3: The system shall deny access when credentials are invalid.",
-    "normalized_text": "Deny access when credentials are invalid.",
+    "normalized_text": "deny access when credentials are invalid",
     "type": "functional",
-    "title": "Invalid Credentials Denial",
+    "subtype": "security",
+    "title": "Invalid Credentials Access Denial",
     "actor": [
       "system"
     ],
@@ -328,14 +333,13 @@
       "deny access"
     ],
     "entities": [
-      "credentials"
+      "credentials",
+      "access"
     ],
     "inputs": [
       "invalid credentials"
     ],
-    "outputs": [
-      "denied access"
-    ],
+    "outputs": [],
     "preconditions": [],
     "postconditions": [],
     "conditions": [],
@@ -345,14 +349,14 @@
     ],
     "domain_terms": [
       "authentication",
-      "access control"
+      "authorization"
     ],
     "synonyms": [
-      "invalid login credentials",
-      "unauthorized access"
+      "invalid login",
+      "wrong password"
     ],
     "sub_requirements": [],
-    "retrieval_text": "invalid credentials denial access control authentication",
+    "retrieval_text": "invalid credentials denial access",
     "source": {
       "document_id": null,
       "file_name": "Basic_SRS_Document.docx",
@@ -366,11 +370,13 @@
     }
   },
   {
-    "requirement_id": "REQ-008",
+    "requirement_id": "FR-01.4",
+    "id_source": "source",
     "raw_text": "FR-01.4: The system shall provide an appropriate message when authentication fails.",
     "normalized_text": "The system shall provide an appropriate message when authentication fails.",
     "type": "functional",
-    "title": "Authentication Failure Notification",
+    "subtype": "security",
+    "title": "Provide Authentication Failure Message",
     "actor": [
       "system"
     ],
@@ -378,32 +384,31 @@
       "provide message"
     ],
     "entities": [
+      "system",
       "message",
       "authentication"
     ],
-    "inputs": [
-      "failure of authentication"
-    ],
+    "inputs": [],
     "outputs": [
-      "appropriate message"
+      "message"
     ],
     "preconditions": [],
     "postconditions": [],
     "conditions": [],
     "constraints": [],
     "error_conditions": [
-      "failure of authentication"
+      "authentication failure"
     ],
     "domain_terms": [
       "authentication",
       "message"
     ],
     "synonyms": [
-      "notification",
-      "alert"
+      "error message",
+      "notification"
     ],
     "sub_requirements": [],
-    "retrieval_text": "system, provide message, authentication, message",
+    "retrieval_text": "system authentication message",
     "source": {
       "document_id": null,
       "file_name": "Basic_SRS_Document.docx",
@@ -417,40 +422,40 @@
     }
   },
   {
-    "requirement_id": "REQ-009",
+    "requirement_id": "FR-01.5",
+    "id_source": "source",
     "raw_text": "FR-01.5: The system shall allow an authenticated user to log out.",
-    "normalized_text": "An authenticated user logs out.",
+    "normalized_text": "The system allows an authenticated user to log out.",
     "type": "functional",
-    "title": "User Logout",
+    "subtype": "interface",
+    "title": "Log Out",
     "actor": [
-      "user"
+      "authenticated user"
     ],
     "actions": [
       "log out"
     ],
     "entities": [
+      "system",
       "user"
     ],
-    "inputs": [],
+    "inputs": [
+      "authenticated user"
+    ],
     "outputs": [],
-    "preconditions": [
-      "user is authenticated"
-    ],
-    "postconditions": [
-      "user is logged out"
-    ],
+    "preconditions": [],
+    "postconditions": [],
     "conditions": [],
     "constraints": [],
     "error_conditions": [],
     "domain_terms": [
-      "authentication",
-      "logout"
+      "authentication"
     ],
     "synonyms": [
-      "sign out"
+      "logout"
     ],
     "sub_requirements": [],
-    "retrieval_text": "authenticated user logs out",
+    "retrieval_text": "log out authenticated user system",
     "source": {
       "document_id": null,
       "file_name": "Basic_SRS_Document.docx",
@@ -465,12 +470,14 @@
   },
   {
     "requirement_id": "REQ-010",
+    "id_source": "generated",
     "raw_text": "The system shall allow authorized users to manage the records associated with the application's primary purpose.",
-    "normalized_text": "Authorized users shall manage records associated with the application's primary purpose.",
+    "normalized_text": "Authorized users manage records associated with application's primary purpose.",
     "type": "functional",
-    "title": "Authorized User Record Management",
+    "subtype": "data management",
+    "title": "Record Management",
     "actor": [
-      "user"
+      "Authorized users"
     ],
     "actions": [
       "manage"
@@ -479,23 +486,38 @@
       "records",
       "application"
     ],
-    "inputs": [],
-    "outputs": [],
-    "preconditions": [],
-    "postconditions": [],
-    "conditions": [],
-    "constraints": [],
-    "error_conditions": [],
+    "inputs": [
+      "authorized users"
+    ],
+    "outputs": [
+      "managed records"
+    ],
+    "preconditions": [
+      "application's primary purpose defined"
+    ],
+    "postconditions": [
+      "records managed by authorized users"
+    ],
+    "conditions": [
+      "user authentication"
+    ],
+    "constraints": [
+      "data integrity"
+    ],
+    "error_conditions": [
+      "access denied"
+    ],
     "domain_terms": [
       "record management",
-      "authorization"
+      "authorization",
+      "data management"
     ],
     "synonyms": [
-      "record management",
-      "authorization"
+      "record keeping",
+      "file management"
     ],
     "sub_requirements": [],
-    "retrieval_text": "authorized user record management",
+    "retrieval_text": "authorized users manage records application primary purpose",
     "source": {
       "document_id": null,
       "file_name": "Basic_SRS_Document.docx",
@@ -509,39 +531,40 @@
     }
   },
   {
-    "requirement_id": "REQ-011",
+    "requirement_id": "FR-02.1",
+    "id_source": "source",
     "raw_text": "FR-02.1: The system shall allow authorized users to create a new record.",
-    "normalized_text": "Authorized users should be able to create a new record.",
+    "normalized_text": "The system shall allow authorized users to create a new record.",
     "type": "functional",
+    "subtype": "data management",
     "title": "Create New Record",
     "actor": [
       "authorized user"
     ],
     "actions": [
-      "create"
+      "create new record"
     ],
     "entities": [
-      "new record",
-      "user"
+      "record"
     ],
-    "inputs": [],
+    "inputs": [
+      "new record data"
+    ],
     "outputs": [
       "new record"
     ],
     "preconditions": [],
-    "postconditions": [
-      "new record is created"
-    ],
+    "postconditions": [],
     "conditions": [],
     "constraints": [],
     "error_conditions": [],
     "domain_terms": [
       "record",
-      "database"
+      "data management"
     ],
     "synonyms": [
-      "create new entry",
-      "add new item"
+      "create",
+      "new"
     ],
     "sub_requirements": [],
     "retrieval_text": "authorized user create new record",
@@ -558,11 +581,13 @@
     }
   },
   {
-    "requirement_id": "REQ-012",
+    "requirement_id": "FR-02.2",
+    "id_source": "source",
     "raw_text": "FR-02.2: The system shall validate required fields before saving a record.",
     "normalized_text": "The system shall validate required fields before saving a record.",
     "type": "functional",
-    "title": "Validate Required Fields",
+    "subtype": "interface",
+    "title": "Validate Required Fields Before Saving",
     "actor": [
       "system"
     ],
@@ -571,30 +596,25 @@
       "save"
     ],
     "entities": [
-      "record",
-      "fields"
+      "required fields",
+      "record"
     ],
     "inputs": [
       "required fields"
     ],
     "outputs": [],
     "preconditions": [],
-    "postconditions": [
-      "saving a record"
-    ],
+    "postconditions": [],
     "conditions": [],
     "constraints": [],
     "error_conditions": [],
     "domain_terms": [
-      "validation",
-      "data integrity"
+      "required fields",
+      "record"
     ],
-    "synonyms": [
-      "field validation",
-      "record validation"
-    ],
+    "synonyms": [],
     "sub_requirements": [],
-    "retrieval_text": "validate fields record saving",
+    "retrieval_text": "validate record required fields system",
     "source": {
       "document_id": null,
       "file_name": "Basic_SRS_Document.docx",
@@ -608,10 +628,12 @@
     }
   },
   {
-    "requirement_id": "REQ-013",
+    "requirement_id": "FR-02.3",
+    "id_source": "source",
     "raw_text": "FR-02.3: The system shall allow authorized users to view existing records.",
     "normalized_text": "The system shall allow authorized users to view existing records.",
     "type": "functional",
+    "subtype": "data management",
     "title": "View Existing Records",
     "actor": [
       "authorized user"
@@ -630,15 +652,12 @@
     "constraints": [],
     "error_conditions": [],
     "domain_terms": [
-      "authorization",
-      "record"
+      "record",
+      "authorization"
     ],
-    "synonyms": [
-      "view existing records",
-      "access existing records"
-    ],
+    "synonyms": [],
     "sub_requirements": [],
-    "retrieval_text": "view authorized user records",
+    "retrieval_text": "view authorized user record",
     "source": {
       "document_id": null,
       "file_name": "Basic_SRS_Document.docx",
@@ -652,11 +671,13 @@
     }
   },
   {
-    "requirement_id": "REQ-014",
+    "requirement_id": "FR-02.4",
+    "id_source": "source",
     "raw_text": "FR-02.4: The system shall allow authorized users to modify records they are permitted to change.",
-    "normalized_text": "The system shall allow authorized users to modify records they are permitted to change.",
+    "normalized_text": "Authorized users should be able to modify the records they are allowed to change.",
     "type": "functional",
-    "title": "Authorized User Modification",
+    "subtype": "interface",
+    "title": "Modify Records",
     "actor": [
       "authorized user"
     ],
@@ -664,41 +685,25 @@
       "modify records"
     ],
     "entities": [
-      "records",
-      "users"
+      "record"
     ],
     "inputs": [
-      "records to modify",
-      "user permissions"
+      "authorized user",
+      "record"
     ],
-    "outputs": [
-      "modified records",
-      "authorization confirmation"
-    ],
-    "preconditions": [
-      "user is authorized",
-      "user has permission to modify records"
-    ],
-    "postconditions": [
-      "records are modified",
-      "authorization is confirmed"
-    ],
+    "outputs": [],
+    "preconditions": [],
+    "postconditions": [],
     "conditions": [],
     "constraints": [],
     "error_conditions": [],
     "domain_terms": [
-      "authorization",
-      "permissions",
-      "records"
+      "record",
+      "authorization"
     ],
-    "synonyms": [
-      "change",
-      "update",
-      "edit",
-      "modify"
-    ],
+    "synonyms": [],
     "sub_requirements": [],
-    "retrieval_text": "authorized users modify records permissions",
+    "retrieval_text": "authorized user modify record",
     "source": {
       "document_id": null,
       "file_name": "Basic_SRS_Document.docx",
@@ -712,42 +717,40 @@
     }
   },
   {
-    "requirement_id": "REQ-015",
+    "requirement_id": "FR-02.5",
+    "id_source": "source",
     "raw_text": "FR-02.5: The system shall allow authorized users to delete records when deletion is permitted.",
-    "normalized_text": "Authorized users shall be allowed to delete records if deletion is permitted.",
+    "normalized_text": "Authorized users shall be allowed to delete records when deletion is permitted.",
     "type": "functional",
-    "title": "Permitted Record Deletion",
+    "subtype": "interface",
+    "title": "Delete Records",
     "actor": [
-      "authorized user"
+      "Authorized users"
     ],
     "actions": [
-      "delete record"
+      "allow to delete",
+      "delete records"
     ],
     "entities": [
-      "record"
+      "records",
+      "users"
     ],
     "inputs": [
-      "authorized user",
-      "record"
+      "Authorized users"
     ],
     "outputs": [],
-    "preconditions": [
-      "deletion is permitted"
-    ],
+    "preconditions": [],
     "postconditions": [],
     "conditions": [],
     "constraints": [],
     "error_conditions": [],
     "domain_terms": [
-      "record",
-      "deletion"
+      "deletion",
+      "permission"
     ],
-    "synonyms": [
-      "delete",
-      "erasure"
-    ],
+    "synonyms": [],
     "sub_requirements": [],
-    "retrieval_text": "authorized user, delete record, record, deletion, permitted",
+    "retrieval_text": "authorized users delete records",
     "source": {
       "document_id": null,
       "file_name": "Basic_SRS_Document.docx",
@@ -762,26 +765,26 @@
   },
   {
     "requirement_id": "REQ-016",
+    "id_source": "generated",
     "raw_text": "The system shall provide users with clear feedback about completed operations and basic information about stored records or system activity.",
-    "normalized_text": "",
+    "normalized_text": "Provide clear feedback to users about completed operations and basic information about stored records or system activity.",
     "type": "functional",
-    "title": "Provide Clear Feedback and Information",
+    "subtype": "interface",
+    "title": "Operation Feedback",
     "actor": [
       "user"
     ],
     "actions": [
-      "provide clear feedback",
-      "provide basic information"
+      "provide feedback"
     ],
     "entities": [
-      "completed operations",
-      "stored records",
-      "system activity"
+      "operation",
+      "user"
     ],
     "inputs": [],
     "outputs": [
       "clear feedback",
-      "basic information"
+      "basic information about stored records or system activity"
     ],
     "preconditions": [],
     "postconditions": [],
@@ -790,18 +793,15 @@
     "error_conditions": [],
     "domain_terms": [
       "feedback",
-      "information",
-      "operations",
-      "records",
-      "activity"
+      "completion",
+      "record"
     ],
     "synonyms": [
-      "notification",
-      "update",
-      "report"
+      "feedback",
+      "completion"
     ],
     "sub_requirements": [],
-    "retrieval_text": "user feedback information operations records activity",
+    "retrieval_text": "provide feedback operation user",
     "source": {
       "document_id": null,
       "file_name": "Basic_SRS_Document.docx",
@@ -815,11 +815,13 @@
     }
   },
   {
-    "requirement_id": "REQ-017",
+    "requirement_id": "FR-03.1",
+    "id_source": "source",
     "raw_text": "FR-03.1: The system shall display confirmation after a successful operation.",
     "normalized_text": "The system shall display confirmation after a successful operation.",
     "type": "functional",
-    "title": "Display Confirmation after Successful Operation",
+    "subtype": "interface",
+    "title": "Display Confirmation After Successful Operation",
     "actor": [
       "system"
     ],
@@ -827,27 +829,28 @@
       "display confirmation"
     ],
     "entities": [
-      "operation",
+      "system",
       "confirmation"
     ],
     "inputs": [],
     "outputs": [
       "confirmation"
     ],
-    "preconditions": [
-      "successful operation"
-    ],
+    "preconditions": [],
     "postconditions": [],
     "conditions": [],
     "constraints": [],
     "error_conditions": [],
     "domain_terms": [
-      "confirmation",
-      "operation"
+      "operation",
+      "confirmation"
     ],
-    "synonyms": [],
+    "synonyms": [
+      "confirmation message",
+      "success message"
+    ],
     "sub_requirements": [],
-    "retrieval_text": "system display confirmation operation",
+    "retrieval_text": "system confirmation display operation",
     "source": {
       "document_id": null,
       "file_name": "Basic_SRS_Document.docx",
@@ -861,24 +864,23 @@
     }
   },
   {
-    "requirement_id": "REQ-018",
+    "requirement_id": "FR-03.2",
+    "id_source": "source",
     "raw_text": "FR-03.2: The system shall display meaningful error messages when an operation fails.",
-    "normalized_text": "",
+    "normalized_text": "The system shall display meaningful error messages when an operation fails.",
     "type": "functional",
-    "title": "Display Meaningful Error Messages",
+    "subtype": "usability",
+    "title": "Meaningful Error Messages",
     "actor": [
       "system"
     ],
     "actions": [
-      "display error messages"
+      "display"
     ],
     "entities": [
-      "error messages",
-      "operation"
+      "error messages"
     ],
-    "inputs": [
-      "operation failure"
-    ],
+    "inputs": [],
     "outputs": [
       "error messages"
     ],
@@ -887,18 +889,19 @@
     "conditions": [],
     "constraints": [],
     "error_conditions": [
-      "operation failure"
+      "operation fails"
     ],
     "domain_terms": [
-      "error handling",
-      "system response"
+      "error messages",
+      "operations"
     ],
     "synonyms": [
-      "display error",
-      "show error message"
+      "error",
+      "message",
+      "operation"
     ],
     "sub_requirements": [],
-    "retrieval_text": "display meaningful error messages operation failure",
+    "retrieval_text": "error messages display operation fails",
     "source": {
       "document_id": null,
       "file_name": "Basic_SRS_Document.docx",
@@ -912,11 +915,13 @@
     }
   },
   {
-    "requirement_id": "REQ-019",
+    "requirement_id": "FR-03.3",
+    "id_source": "source",
     "raw_text": "FR-03.3: The system shall provide a basic summary or report of relevant records.",
-    "normalized_text": "The system shall provide a basic summary or report of relevant records.",
+    "normalized_text": "Basic report of relevant records.",
     "type": "functional",
-    "title": "Basic Report",
+    "subtype": "data management",
+    "title": "Summary Report",
     "actor": [
       "system"
     ],
@@ -924,13 +929,11 @@
       "provide"
     ],
     "entities": [
-      "summary",
       "report",
       "records"
     ],
     "inputs": [],
     "outputs": [
-      "summary",
       "report"
     ],
     "preconditions": [],
@@ -940,14 +943,12 @@
     "error_conditions": [],
     "domain_terms": [
       "report",
-      "records"
+      "records",
+      "summary"
     ],
-    "synonyms": [
-      "summary report",
-      "records report"
-    ],
+    "synonyms": [],
     "sub_requirements": [],
-    "retrieval_text": "system provide summary report records",
+    "retrieval_text": "report relevant records",
     "source": {
       "document_id": null,
       "file_name": "Basic_SRS_Document.docx",
@@ -961,16 +962,18 @@
     }
   },
   {
-    "requirement_id": "REQ-020",
+    "requirement_id": "FR-03.4",
+    "id_source": "source",
     "raw_text": "FR-03.4: The system shall present report information in a readable format.",
     "normalized_text": "The system shall present report information in a readable format.",
     "type": "functional",
-    "title": "Present Report Information",
+    "subtype": "interface",
+    "title": "Present Report Information in Readable Format",
     "actor": [
       "system"
     ],
     "actions": [
-      "present"
+      "present report information"
     ],
     "entities": [
       "report",
@@ -985,11 +988,12 @@
     "error_conditions": [],
     "domain_terms": [
       "report",
-      "information"
+      "information",
+      "format"
     ],
     "synonyms": [],
     "sub_requirements": [],
-    "retrieval_text": "system report information present readable",
+    "retrieval_text": "report information readable format",
     "source": {
       "document_id": null,
       "file_name": "Basic_SRS_Document.docx",
@@ -1003,11 +1007,13 @@
     }
   },
   {
-    "requirement_id": "REQ-021",
+    "requirement_id": "FR-03.5",
+    "id_source": "source",
     "raw_text": "FR-03.5: The system shall ensure that users can only access information permitted by their role.",
-    "normalized_text": "The system shall ensure users can only access information permitted by their role.",
-    "type": "non-functional",
-    "title": "Access Control Based on Role",
+    "normalized_text": "users can only access information permitted by their role.",
+    "type": "functional",
+    "subtype": "interface",
+    "title": "Role-Based Access Control",
     "actor": [
       "user"
     ],
@@ -1019,18 +1025,33 @@
       "information",
       "role"
     ],
-    "inputs": [],
-    "outputs": [],
-    "preconditions": [],
-    "postconditions": [],
-    "conditions": [],
-    "constraints": [],
-    "error_conditions": [],
-    "domain_terms": [
-      "role-based access control",
-      "access control"
+    "inputs": [
+      "user's role"
     ],
-    "synonyms": [],
+    "outputs": [
+      "access to permitted information"
+    ],
+    "preconditions": [
+      "user is authenticated"
+    ],
+    "postconditions": [
+      "user can only access permitted information"
+    ],
+    "conditions": [
+      "user's role determines access"
+    ],
+    "constraints": [],
+    "error_conditions": [
+      "unauthorized access"
+    ],
+    "domain_terms": [
+      "access control",
+      "authorization",
+      "permissions"
+    ],
+    "synonyms": [
+      "role-based access control"
+    ],
     "sub_requirements": [],
     "retrieval_text": "user access information role",
     "source": {
@@ -1047,38 +1068,36 @@
   },
   {
     "requirement_id": "REQ-022",
+    "id_source": "generated",
     "raw_text": "The system shall provide responsive interaction under normal expected load.",
     "normalized_text": "The system shall provide responsive interaction under normal expected load.",
     "type": "non-functional",
-    "title": "Responsive Interaction Under Normal Expected Load",
+    "subtype": "performance",
+    "title": "Responsive Interaction",
     "actor": [
-      "system",
-      "user"
+      "system"
     ],
     "actions": [
       "provide responsive interaction"
     ],
     "entities": [
       "system",
-      "user"
+      "interaction"
     ],
     "inputs": [],
     "outputs": [],
     "preconditions": [],
     "postconditions": [],
-    "conditions": [
+    "conditions": [],
+    "constraints": [
       "normal expected load"
     ],
-    "constraints": [],
     "error_conditions": [],
     "domain_terms": [
-      "responsive interaction",
-      "normal expected load"
+      "system",
+      "interaction"
     ],
-    "synonyms": [
-      "fast",
-      "responsive"
-    ],
+    "synonyms": [],
     "sub_requirements": [],
     "retrieval_text": "responsive interaction normal expected load",
     "source": {
@@ -1095,10 +1114,12 @@
   },
   {
     "requirement_id": "REQ-023",
+    "id_source": "generated",
     "raw_text": "Common user actions such as authentication, record retrieval, and submission should normally receive a response within an acceptable time for the deployment environment.",
-    "normalized_text": "User actions should normally receive a response within an acceptable time for the deployment environment.",
+    "normalized_text": "User actions should receive a response within an acceptable time.",
     "type": "non-functional",
-    "title": "Acceptable Response Time for User Actions",
+    "subtype": "performance",
+    "title": "Response Time for User Actions",
     "actor": [
       "user"
     ],
@@ -1106,9 +1127,8 @@
       "receive response"
     ],
     "entities": [
-      "user",
-      "response",
-      "deployment environment"
+      "action",
+      "response"
     ],
     "inputs": [],
     "outputs": [],
@@ -1116,20 +1136,21 @@
     "postconditions": [],
     "conditions": [],
     "constraints": [
-      "acceptable time"
+      "acceptable time",
+      "deployment environment"
     ],
     "error_conditions": [],
     "domain_terms": [
-      "authentication",
-      "record retrieval",
-      "submission"
+      "response time",
+      "user experience",
+      "deployment"
     ],
     "synonyms": [
       "response time",
-      "performance"
+      "load time"
     ],
     "sub_requirements": [],
-    "retrieval_text": "user receive response acceptable time deployment environment",
+    "retrieval_text": "response time user experience deployment",
     "source": {
       "document_id": null,
       "file_name": "Basic_SRS_Document.docx",
@@ -1144,21 +1165,22 @@
   },
   {
     "requirement_id": "REQ-024",
+    "id_source": "generated",
     "raw_text": "The system should avoid unnecessary processing and database operations that could negatively affect responsiveness.",
-    "normalized_text": "Avoid unnecessary processing and database operations to prevent responsiveness issues.",
+    "normalized_text": "The system should avoid unnecessary processing and database operations that could negatively affect responsiveness.",
     "type": "non-functional",
+    "subtype": "performance",
     "title": "Optimize System Performance",
     "actor": [
       "system"
     ],
     "actions": [
-      "avoid processing",
-      "avoid database operations"
+      "avoid",
+      "process"
     ],
     "entities": [
       "processing",
-      "database operations",
-      "responsiveness"
+      "database operations"
     ],
     "inputs": [],
     "outputs": [],
@@ -1166,19 +1188,20 @@
     "postconditions": [],
     "conditions": [],
     "constraints": [
-      "avoid unnecessary operations"
+      "avoid",
+      "unnecessary"
     ],
     "error_conditions": [],
     "domain_terms": [
       "performance",
-      "optimization"
+      "responsiveness"
     ],
     "synonyms": [
-      "improve responsiveness",
-      "reduce latency"
+      "optimize",
+      "enhance"
     ],
     "sub_requirements": [],
-    "retrieval_text": "avoid processing database operations optimize performance",
+    "retrieval_text": "optimization performance responsiveness",
     "source": {
       "document_id": null,
       "file_name": "Basic_SRS_Document.docx",
@@ -1192,28 +1215,25 @@
     }
   },
   {
-    "requirement_id": "REQ-025",
+    "requirement_id": "NFR-01.1",
+    "id_source": "source",
     "raw_text": "NFR-01.1: Normal user requests should receive a response within approximately 3 seconds under expected load.",
     "normalized_text": "Normal user requests should receive a response within approximately 3 seconds under expected load.",
     "type": "non-functional",
-    "title": "Response Time for Normal User Requests",
+    "subtype": "performance",
+    "title": "Response Time",
     "actor": [
-      "normal user"
+      "Normal user"
     ],
     "actions": [
-      "request"
+      "receive a response"
     ],
     "entities": [
-      "response",
-      "load"
-    ],
-    "inputs": [],
-    "outputs": [
       "response"
     ],
-    "preconditions": [
-      "expected load"
-    ],
+    "inputs": [],
+    "outputs": [],
+    "preconditions": [],
     "postconditions": [],
     "conditions": [],
     "constraints": [
@@ -1221,16 +1241,12 @@
     ],
     "error_conditions": [],
     "domain_terms": [
-      "response time",
       "load",
-      "performance"
+      "response time"
     ],
-    "synonyms": [
-      "response time",
-      "latency"
-    ],
+    "synonyms": [],
     "sub_requirements": [],
-    "retrieval_text": "response time load normal user request",
+    "retrieval_text": "response time normal user load",
     "source": {
       "document_id": null,
       "file_name": "Basic_SRS_Document.docx",
@@ -1244,44 +1260,45 @@
     }
   },
   {
-    "requirement_id": "REQ-026",
+    "requirement_id": "NFR-01.2",
+    "id_source": "source",
     "raw_text": "NFR-01.2: The application should support multiple concurrent users without noticeable degradation under the defined normal workload.",
-    "normalized_text": "support multiple concurrent users without noticeable degradation under the defined normal workload",
+    "normalized_text": "The application should support multiple concurrent users without noticeable degradation under the defined normal workload.",
     "type": "non-functional",
-    "title": "Scalability under Normal Workload",
+    "subtype": "availability",
+    "title": "Support for Multiple Concurrent Users",
     "actor": [
-      "concurrent users",
       "application"
     ],
     "actions": [
-      "support",
-      "degrade"
+      "support"
     ],
     "entities": [
       "users",
+      "application",
       "workload"
     ],
     "inputs": [
+      "concurrent users",
       "normal workload"
     ],
     "outputs": [],
-    "preconditions": [],
-    "postconditions": [],
-    "conditions": [
-      "normal workload"
+    "preconditions": [
+      "defined normal workload"
     ],
-    "constraints": [],
+    "postconditions": [],
+    "conditions": [],
+    "constraints": [
+      "noticeable degradation"
+    ],
     "error_conditions": [],
     "domain_terms": [
       "scalability",
       "performance"
     ],
-    "synonyms": [
-      "concurrency",
-      "load"
-    ],
+    "synonyms": [],
     "sub_requirements": [],
-    "retrieval_text": "scalability performance concurrency load users workload",
+    "retrieval_text": "support concurrent users scalability performance",
     "source": {
       "document_id": null,
       "file_name": "Basic_SRS_Document.docx",
@@ -1295,19 +1312,20 @@
     }
   },
   {
-    "requirement_id": "REQ-027",
+    "requirement_id": "NFR-01.3",
+    "id_source": "source",
     "raw_text": "NFR-01.3: Database queries should be designed to retrieve only the information required for the requested operation.",
-    "normalized_text": "",
+    "normalized_text": "Database queries should be designed to retrieve only the information required for the requested operation.",
     "type": "non-functional",
-    "title": "Optimize Database Queries",
+    "subtype": "performance",
+    "title": "Optimized Database Queries",
     "actor": [],
     "actions": [
       "be designed to retrieve only information required for requested operation"
     ],
     "entities": [
       "database",
-      "queries",
-      "information"
+      "queries"
     ],
     "inputs": [],
     "outputs": [],
@@ -1318,12 +1336,12 @@
     "error_conditions": [],
     "domain_terms": [
       "database",
-      "query",
-      "optimization"
+      "queries",
+      "information"
     ],
     "synonyms": [],
     "sub_requirements": [],
-    "retrieval_text": "database queries optimization",
+    "retrieval_text": "database queries information requested operation",
     "source": {
       "document_id": null,
       "file_name": "Basic_SRS_Document.docx",
@@ -1338,10 +1356,12 @@
   },
   {
     "requirement_id": "REQ-028",
+    "id_source": "generated",
     "raw_text": "The system shall protect user accounts and application data against unauthorized access and common security risks.",
-    "normalized_text": "",
-    "type": "constraint",
-    "title": "Protect Against Unauthorized Access",
+    "normalized_text": "The system shall protect user accounts and application data against unauthorized access and common security risks.",
+    "type": "non-functional",
+    "subtype": "security",
+    "title": "Data Security",
     "actor": [
       "system"
     ],
@@ -1364,11 +1384,11 @@
       "authorization"
     ],
     "synonyms": [
-      "unauthorized access",
-      "common security risks"
+      "access control",
+      "data protection"
     ],
     "sub_requirements": [],
-    "retrieval_text": "system protect user accounts application data",
+    "retrieval_text": "user accounts, application data, protect",
     "source": {
       "document_id": null,
       "file_name": "Basic_SRS_Document.docx",
@@ -1382,14 +1402,18 @@
     }
   },
   {
-    "requirement_id": "REQ-029",
+    "requirement_id": "NFR-02.1",
+    "id_source": "source",
     "raw_text": "NFR-02.1: Passwords shall not be stored in plain text.",
-    "normalized_text": "Passwords must not be stored in plain text.",
-    "type": "constraint",
-    "title": "No Plain Text Password Storage",
-    "actor": [],
+    "normalized_text": "Passwords shall not be stored in plain text.",
+    "type": "non-functional",
+    "subtype": "security",
+    "title": "Password Storage Security",
+    "actor": [
+      "system"
+    ],
     "actions": [
-      "not be stored in plain text"
+      "store"
     ],
     "entities": [
       "password"
@@ -1403,14 +1427,15 @@
     "error_conditions": [],
     "domain_terms": [
       "password",
-      "security"
+      "security",
+      "authentication"
     ],
     "synonyms": [
-      "plaintext",
-      "unencrypted"
+      "password",
+      "plaintext"
     ],
     "sub_requirements": [],
-    "retrieval_text": "password storage plaintext security",
+    "retrieval_text": "passwords plain text store",
     "source": {
       "document_id": null,
       "file_name": "Basic_SRS_Document.docx",
@@ -1424,30 +1449,42 @@
     }
   },
   {
-    "requirement_id": "REQ-030",
+    "requirement_id": "NFR-02.2",
+    "id_source": "source",
     "raw_text": "NFR-02.2: Protected resources shall require successful authentication and authorization.",
-    "normalized_text": "protected resources require successful authentication and authorization",
+    "normalized_text": "Protected resources must require successful authentication and authorization.",
     "type": "non-functional",
-    "title": "Protected Resource Access",
+    "subtype": "security",
+    "title": "Protected Resource Authentication",
     "actor": [
-      "user"
+      "user",
+      "system"
     ],
     "actions": [
-      "access"
+      "require successful authentication",
+      "require successful authorization"
     ],
     "entities": [
-      "resource"
+      "protected resources",
+      "authentication",
+      "authorization"
     ],
     "inputs": [
-      "user authentication",
-      "user authorization"
+      "user credentials"
     ],
-    "outputs": [],
+    "outputs": [
+      "access to protected resources"
+    ],
     "preconditions": [],
-    "postconditions": [],
+    "postconditions": [
+      "access to protected resources"
+    ],
     "conditions": [],
     "constraints": [],
-    "error_conditions": [],
+    "error_conditions": [
+      "unsuccessful authentication",
+      "unsuccessful authorization"
+    ],
     "domain_terms": [
       "authentication",
       "authorization",
@@ -1456,10 +1493,10 @@
     "synonyms": [
       "login",
       "login process",
-      "access approval"
+      "access management"
     ],
     "sub_requirements": [],
-    "retrieval_text": "access authentication authorization",
+    "retrieval_text": "access protected resources authentication authorization",
     "source": {
       "document_id": null,
       "file_name": "Basic_SRS_Document.docx",
@@ -1473,11 +1510,13 @@
     }
   },
   {
-    "requirement_id": "REQ-031",
+    "requirement_id": "NFR-02.3",
+    "id_source": "source",
     "raw_text": "NFR-02.3: User input shall be validated before being processed or stored.",
-    "normalized_text": "User input validation",
-    "type": "constraint",
-    "title": "User Input Validation",
+    "normalized_text": "User input shall be validated before being processed or stored.",
+    "type": "non-functional",
+    "subtype": "security",
+    "title": "Input Validation",
     "actor": [
       "user"
     ],
@@ -1485,28 +1524,27 @@
       "validate"
     ],
     "entities": [
-      "user input"
+      "input"
     ],
     "inputs": [
       "user input"
     ],
     "outputs": [],
     "preconditions": [],
-    "postconditions": [
-      "validated user input"
-    ],
+    "postconditions": [],
     "conditions": [],
     "constraints": [],
     "error_conditions": [],
     "domain_terms": [
-      "input validation"
+      "input validation",
+      "data integrity"
     ],
     "synonyms": [
       "input validation",
-      "data validation"
+      "data integrity"
     ],
     "sub_requirements": [],
-    "retrieval_text": "user input validation",
+    "retrieval_text": "input validation user",
     "source": {
       "document_id": null,
       "file_name": "Basic_SRS_Document.docx",
@@ -1520,20 +1558,21 @@
     }
   },
   {
-    "requirement_id": "REQ-032",
+    "requirement_id": "NFR-02.4",
+    "id_source": "source",
     "raw_text": "NFR-02.4: Sensitive communication should use secure transport such as HTTPS in production.",
     "normalized_text": "Sensitive communication should use secure transport such as HTTPS in production.",
     "type": "non-functional",
-    "title": "Secure Communication Transport",
+    "subtype": "security",
+    "title": "Use Secure Transport for Sensitive Communication",
     "actor": [
-      "production environment"
+      "system"
     ],
     "actions": [
       "use secure transport"
     ],
     "entities": [
       "communication",
-      "transport",
       "HTTPS"
     ],
     "inputs": [],
@@ -1542,21 +1581,20 @@
     "postconditions": [],
     "conditions": [],
     "constraints": [
-      "production environment"
+      "in production"
     ],
     "error_conditions": [],
     "domain_terms": [
       "HTTPS",
-      "secure transport",
-      "production"
+      "communication",
+      "transport"
     ],
     "synonyms": [
-      "SSL/TLS",
-      "encrypted communication",
-      "security protocols"
+      "HTTPS",
+      "secure transport"
     ],
     "sub_requirements": [],
-    "retrieval_text": "secure transport HTTPS production",
+    "retrieval_text": "HTTPS secure transport production communication",
     "source": {
       "document_id": null,
       "file_name": "Basic_SRS_Document.docx",
@@ -1570,20 +1608,21 @@
     }
   },
   {
-    "requirement_id": "REQ-033",
+    "requirement_id": "NFR-02.5",
+    "id_source": "source",
     "raw_text": "NFR-02.5: The system shall not expose sensitive information through normal error messages.",
     "normalized_text": "The system shall not expose sensitive information through normal error messages.",
     "type": "non-functional",
-    "title": "Sensitive Information Protection",
+    "subtype": "security",
+    "title": "Error Message Security",
     "actor": [
       "system"
     ],
     "actions": [
-      "expose sensitive information"
+      "not expose sensitive information through normal error messages"
     ],
     "entities": [
-      "sensitive information",
-      "error messages"
+      "sensitive information"
     ],
     "inputs": [],
     "outputs": [],
@@ -1592,19 +1631,15 @@
     "conditions": [],
     "constraints": [],
     "error_conditions": [
-      "exposing sensitive information through normal error messages"
+      "exposure of sensitive information"
     ],
     "domain_terms": [
       "security",
-      "sensitive data",
-      "error handling"
+      "information"
     ],
-    "synonyms": [
-      "data protection",
-      "confidentiality"
-    ],
+    "synonyms": [],
     "sub_requirements": [],
-    "retrieval_text": "sensitive information protection system error messages",
+    "retrieval_text": "error messages security sensitive information",
     "source": {
       "document_id": null,
       "file_name": "Basic_SRS_Document.docx",
@@ -1619,25 +1654,22 @@
   },
   {
     "requirement_id": "REQ-034",
+    "id_source": "generated",
     "raw_text": "The interface shall provide clear navigation, readable labels, consistent controls, and understandable feedback.",
-    "normalized_text": "The interface shall provide clear navigation, readable labels, consistent controls, and understandable feedback.",
-    "type": "interface",
-    "title": "Clear Interface Navigation and Feedback",
+    "normalized_text": "interface clear navigation readable labels consistent controls understandable feedback",
+    "type": "non-functional",
+    "subtype": "usability",
+    "title": "Clear Interface Navigation",
     "actor": [
-      "user"
+      "user",
+      "interface"
     ],
     "actions": [
-      "navigate",
-      "read",
-      "click",
-      "receive feedback"
+      "provide navigation"
     ],
     "entities": [
       "interface",
-      "navigation",
-      "labels",
-      "controls",
-      "feedback"
+      "navigation"
     ],
     "inputs": [],
     "outputs": [],
@@ -1648,18 +1680,11 @@
     "error_conditions": [],
     "domain_terms": [
       "interface",
-      "navigation",
-      "usability",
-      "user experience"
+      "navigation"
     ],
-    "synonyms": [
-      "clear navigation",
-      "readable labels",
-      "consistent controls",
-      "understandable feedback"
-    ],
+    "synonyms": [],
     "sub_requirements": [],
-    "retrieval_text": "clear navigation readable labels consistent controls understandable feedback",
+    "retrieval_text": "clear interface navigation readable labels consistent controls understandable feedback",
     "source": {
       "document_id": null,
       "file_name": "Basic_SRS_Document.docx",
@@ -1674,13 +1699,14 @@
   },
   {
     "requirement_id": "REQ-035",
+    "id_source": "generated",
     "raw_text": "Forms shall identify required fields and provide validation feedback when submitted information is missing or invalid.",
-    "normalized_text": "Forms should identify required fields and provide validation feedback when submitted information is missing or invalid.",
-    "type": "functional",
-    "title": "Form Validation",
+    "normalized_text": "Forms identify required fields and provide validation feedback when submitted information is missing or invalid.",
+    "type": "non-functional",
+    "subtype": "usability",
+    "title": "Validation Feedback",
     "actor": [
-      "System",
-      "User"
+      "system"
     ],
     "actions": [
       "identify required fields",
@@ -1688,8 +1714,9 @@
     ],
     "entities": [
       "forms",
-      "fields",
-      "information"
+      "required fields",
+      "submitted information",
+      "validation feedback"
     ],
     "inputs": [
       "submitted information"
@@ -1697,21 +1724,32 @@
     "outputs": [
       "validation feedback"
     ],
-    "preconditions": [],
-    "postconditions": [],
-    "conditions": [],
-    "constraints": [],
-    "error_conditions": [],
+    "preconditions": [
+      "forms are submitted"
+    ],
+    "postconditions": [
+      "validation feedback is provided"
+    ],
+    "conditions": [
+      "submitted information is missing or invalid"
+    ],
+    "constraints": [
+      "forms must identify required fields"
+    ],
+    "error_conditions": [
+      "submitted information is invalid"
+    ],
     "domain_terms": [
-      "form validation",
-      "required fields"
+      "forms",
+      "validation",
+      "feedback"
     ],
     "synonyms": [
-      "form validation",
-      "field validation"
+      "validation messages",
+      "error messages"
     ],
     "sub_requirements": [],
-    "retrieval_text": "form, field, validation, feedback, required field",
+    "retrieval_text": "forms, validation feedback, submitted information",
     "source": {
       "document_id": null,
       "file_name": "Basic_SRS_Document.docx",
@@ -1726,54 +1764,60 @@
   },
   {
     "requirement_id": "REQ-036",
+    "id_source": "generated",
     "raw_text": "The application may communicate with a database through a backend service or API. If external services are required, the system shall use documented interfaces and handle unavailable services gracefully.",
-    "normalized_text": "The system shall use documented interfaces to communicate with external services.",
+    "normalized_text": "The application may communicate with a database through a backend service or API. If external services are required, the system shall use documented interfaces and handle unavailable services gracefully.",
     "type": "non-functional",
-    "title": "Communication with External Services",
+    "subtype": "interface",
+    "title": "Database Communication",
     "actor": [
-      "system",
-      "backend service/API",
-      "external services"
+      "backend service",
+      "API",
+      "system"
     ],
     "actions": [
-      "communicate",
-      "use"
+      "communicate with database",
+      "use documented interfaces",
+      "handle unavailable services"
     ],
     "entities": [
       "database",
-      "backend service/API",
-      "external services",
-      "interfaces"
+      "backend service",
+      "API",
+      "services"
     ],
     "inputs": [
-      "external services"
+      "database",
+      "backend service",
+      "API"
     ],
     "outputs": [],
     "preconditions": [
       "external services are required"
     ],
     "postconditions": [
-      "system uses documented interfaces"
+      "system shall use documented interfaces",
+      "handle unavailable services"
     ],
-    "conditions": [],
+    "conditions": [
+      "if external services are required"
+    ],
     "constraints": [],
     "error_conditions": [
       "unavailable services"
     ],
     "domain_terms": [
-      "API",
-      "backend service",
       "database",
-      "interfaces"
+      "backend service",
+      "API",
+      "services"
     ],
     "synonyms": [
-      "API",
-      "backend service",
-      "database",
-      "interfaces"
+      "database communication",
+      "API interface"
     ],
     "sub_requirements": [],
-    "retrieval_text": "communication, API, backend service, database, interfaces, external services",
+    "retrieval_text": "database communication backend service API documented interfaces unavailable services",
     "source": {
       "document_id": null,
       "file_name": "Basic_SRS_Document.docx",
@@ -1788,10 +1832,12 @@
   },
   {
     "requirement_id": "REQ-037",
+    "id_source": "generated",
     "raw_text": "No specialized hardware is required for the basic system. Users are expected to interact through standard computing devices such as laptops, desktops, tablets, or smartphones.",
-    "normalized_text": "No specialized hardware is required for the basic system.",
+    "normalized_text": "No specialized hardware is required for the basic system. Users are expected to interact through standard computing devices such as laptops, desktops, tablets, or smartphones.",
     "type": "non-functional",
-    "title": "No Specialized Hardware Required",
+    "subtype": "availability",
+    "title": "Hardware Requirements",
     "actor": [
       "user"
     ],
@@ -1799,29 +1845,25 @@
       "interact"
     ],
     "entities": [
-      "system",
-      "laptops",
-      "desktops",
-      "tablets",
-      "smartphones"
+      "standard computing devices"
     ],
     "inputs": [],
     "outputs": [],
-    "preconditions": [
-      "basic system"
-    ],
+    "preconditions": [],
     "postconditions": [],
     "conditions": [],
     "constraints": [],
     "error_conditions": [],
     "domain_terms": [
-      "computing devices"
+      "standard computing devices",
+      "laptops",
+      "desktops",
+      "tablets",
+      "smartphones"
     ],
-    "synonyms": [
-      "standard hardware"
-    ],
+    "synonyms": [],
     "sub_requirements": [],
-    "retrieval_text": "no specialized hardware, user, interact, system, laptops, desktops, tablets, smartphones",
+    "retrieval_text": "user interact standard computing devices",
     "source": {
       "document_id": null,
       "file_name": "Basic_SRS_Document.docx",
@@ -1836,21 +1878,25 @@
   },
   {
     "requirement_id": "REQ-038",
+    "id_source": "generated",
     "raw_text": "For a web-based deployment, communication between the client and server shall use standard HTTP-based protocols, with HTTPS recommended for production use.",
-    "normalized_text": "Web-based deployment communication protocols",
+    "normalized_text": "For a web-based deployment, communication between the client and server shall use standard HTTP-based protocols, with HTTPS recommended for production use.",
     "type": "non-functional",
-    "title": "Use Standard HTTP-Based Protocols",
+    "subtype": "compatibility",
+    "title": "Secure Communication Protocol",
     "actor": [
       "client",
       "server"
     ],
     "actions": [
-      "use"
+      "use",
+      "communicate"
     ],
     "entities": [
+      "HTTP-based protocols",
+      "HTTPS",
       "client",
-      "server",
-      "protocol"
+      "server"
     ],
     "inputs": [],
     "outputs": [],
@@ -1858,20 +1904,22 @@
     "postconditions": [],
     "conditions": [],
     "constraints": [
-      "standard HTTP-based protocols"
+      "standard HTTP-based protocols",
+      "HTTPS recommended for production use"
     ],
     "error_conditions": [],
     "domain_terms": [
-      "HTTP",
-      "HTTPS",
-      "communication"
-    ],
-    "synonyms": [
+      "communication",
+      "security",
       "HTTP",
       "HTTPS"
     ],
+    "synonyms": [
+      "secure communication",
+      "encrypted communication"
+    ],
     "sub_requirements": [],
-    "retrieval_text": "web-based deployment, communication, protocol",
+    "retrieval_text": "communication protocol security HTTP HTTPS",
     "source": {
       "document_id": null,
       "file_name": "Basic_SRS_Document.docx",
@@ -1886,10 +1934,12 @@
   },
   {
     "requirement_id": "REQ-039",
+    "id_source": "generated",
     "raw_text": "The system must operate within the resources available in the selected deployment environment.",
-    "normalized_text": "The system must operate within the resources available in the selected deployment environment.",
+    "normalized_text": "system must operate within resources available in selected deployment environment",
     "type": "non-functional",
-    "title": "Operate within Resource Constraints",
+    "subtype": "availability",
+    "title": "Operate Within Resources",
     "actor": [
       "system"
     ],
@@ -1901,25 +1951,22 @@
       "resources",
       "deployment environment"
     ],
-    "inputs": [],
+    "inputs": [
+      "resources available in the selected deployment environment"
+    ],
     "outputs": [],
     "preconditions": [],
     "postconditions": [],
     "conditions": [],
-    "constraints": [
-      "must operate within available resources"
-    ],
+    "constraints": [],
     "error_conditions": [],
     "domain_terms": [
-      "resource allocation",
-      "environmental constraint"
+      "resources",
+      "deployment environment"
     ],
-    "synonyms": [
-      "resource limitation",
-      "environmental factor"
-    ],
+    "synonyms": [],
     "sub_requirements": [],
-    "retrieval_text": "system resources deployment environment",
+    "retrieval_text": "system operate within resources deployment environment",
     "source": {
       "document_id": null,
       "file_name": "Basic_SRS_Document.docx",
@@ -1934,17 +1981,20 @@
   },
   {
     "requirement_id": "REQ-040",
+    "id_source": "generated",
     "raw_text": "The database schema shall remain consistent with the application's data model.",
-    "normalized_text": "Database schema consistency with application's data model.",
+    "normalized_text": "The database schema shall remain consistent with the application's data model.",
     "type": "non-functional",
+    "subtype": "data management",
     "title": "Database Schema Consistency",
     "actor": [],
     "actions": [
       "remain consistent with application's data model"
     ],
     "entities": [
-      "database schema",
-      "application's data model"
+      "database",
+      "schema",
+      "data model"
     ],
     "inputs": [],
     "outputs": [],
@@ -1958,9 +2008,12 @@
       "schema",
       "data model"
     ],
-    "synonyms": [],
+    "synonyms": [
+      "database schema",
+      "data model"
+    ],
     "sub_requirements": [],
-    "retrieval_text": "database schema consistency application data model",
+    "retrieval_text": "database schema consistency",
     "source": {
       "document_id": null,
       "file_name": "Basic_SRS_Document.docx",
@@ -1975,19 +2028,21 @@
   },
   {
     "requirement_id": "REQ-041",
+    "id_source": "generated",
     "raw_text": "The system shall maintain accurate and consistent records required by its functional features. Typical data may include user account information, authentication-related data, application records, timestamps, and status information.",
-    "normalized_text": "The system shall maintain accurate and consistent records required by its functional features.",
+    "normalized_text": "",
     "type": "non-functional",
-    "title": "Maintain Accurate and Consistent Records",
+    "subtype": "data management",
+    "title": "Data Accuracy and Consistency",
     "actor": [
       "system"
     ],
     "actions": [
-      "maintain"
+      "maintain",
+      "update"
     ],
     "entities": [
       "records",
-      "data",
       "user account information",
       "authentication-related data",
       "application records",
@@ -2002,19 +2057,19 @@
     "constraints": [],
     "error_conditions": [],
     "domain_terms": [
-      "data",
-      "records",
-      "user account",
-      "authentication",
-      "application",
-      "status"
+      "data accuracy",
+      "data consistency",
+      "data integrity",
+      "records management"
     ],
     "synonyms": [
-      "data",
-      "information"
+      "accuracy",
+      "consistency",
+      "reliability",
+      "truthfulness"
     ],
     "sub_requirements": [],
-    "retrieval_text": "system maintain records data user account information authentication",
+    "retrieval_text": "data accuracy data consistency records management",
     "source": {
       "document_id": null,
       "file_name": "Basic_SRS_Document.docx",
@@ -2029,49 +2084,43 @@
   },
   {
     "requirement_id": "REQ-042",
+    "id_source": "generated",
     "raw_text": "Required fields shall be validated before persistence.",
-    "normalized_text": "Required fields must be validated before data is saved.",
-    "type": "non-functional",
-    "title": "Input Validation Before Persistence",
+    "normalized_text": "Validation of required fields before persistence.",
+    "type": "functional",
+    "subtype": "data management",
+    "title": "Validate Required Fields",
     "actor": [
-      "user",
-      "system"
+      "admin"
     ],
     "actions": [
-      "validate",
-      "persist"
+      "validate"
     ],
     "entities": [
-      "data",
-      "fields"
+      "fields",
+      "persistence"
     ],
     "inputs": [
       "required fields"
     ],
     "outputs": [
-      "validated data"
+      "validation result"
     ],
-    "preconditions": [
-      "data is available"
-    ],
-    "postconditions": [
-      "data is saved"
-    ],
+    "preconditions": [],
+    "postconditions": [],
     "conditions": [],
     "constraints": [],
-    "error_conditions": [
-      "invalid data"
-    ],
+    "error_conditions": [],
     "domain_terms": [
       "validation",
-      "persistence"
-    ],
-    "synonyms": [
-      "input validation",
       "data integrity"
     ],
+    "synonyms": [
+      "field validation",
+      "data validation"
+    ],
     "sub_requirements": [],
-    "retrieval_text": "input validation data persistence",
+    "retrieval_text": "validate fields data integrity",
     "source": {
       "document_id": null,
       "file_name": "Basic_SRS_Document.docx",
@@ -2086,37 +2135,52 @@
   },
   {
     "requirement_id": "REQ-043",
+    "id_source": "generated",
     "raw_text": "Records shall have a unique identifier where appropriate.",
-    "normalized_text": "Records must have a unique identifier when necessary.",
-    "type": "data",
+    "normalized_text": "Records shall have a unique identifier where appropriate.",
+    "type": "functional",
+    "subtype": "data management",
     "title": "Unique Identifier for Records",
     "actor": [
-      "system"
+      "admin"
     ],
     "actions": [
-      "assign unique identifier"
+      "create unique identifier"
     ],
     "entities": [
-      "record"
+      "records"
     ],
-    "inputs": [],
+    "inputs": [
+      "None"
+    ],
     "outputs": [
       "unique identifier"
     ],
-    "preconditions": [],
-    "postconditions": [],
-    "conditions": [],
-    "constraints": [],
-    "error_conditions": [],
+    "preconditions": [
+      "None"
+    ],
+    "postconditions": [
+      "Each record has a unique identifier"
+    ],
+    "conditions": [
+      "None"
+    ],
+    "constraints": [
+      "None"
+    ],
+    "error_conditions": [
+      "Duplicate identifier"
+    ],
     "domain_terms": [
-      "record",
-      "identifier"
+      "identifier",
+      "record"
     ],
     "synonyms": [
-      "unique record ID"
+      "ID",
+      "unique key"
     ],
     "sub_requirements": [],
-    "retrieval_text": "record identifier assignment",
+    "retrieval_text": "unique identifier record",
     "source": {
       "document_id": null,
       "file_name": "Basic_SRS_Document.docx",
@@ -2131,20 +2195,21 @@
   },
   {
     "requirement_id": "REQ-044",
+    "id_source": "generated",
     "raw_text": "Data shall be stored using a persistent storage mechanism.",
-    "normalized_text": "Data storage mechanism shall be persistent.",
-    "type": "functional",
-    "title": "Persistent Data Storage",
+    "normalized_text": "Data shall be stored persistently.",
+    "type": "non-functional",
+    "subtype": "data management",
+    "title": "Data Persistence",
     "actor": [
       "system"
     ],
     "actions": [
-      "store"
+      "store data"
     ],
     "entities": [
       "data",
-      "storage",
-      "mechanism"
+      "storage mechanism"
     ],
     "inputs": [],
     "outputs": [],
@@ -2159,11 +2224,11 @@
       "persistence"
     ],
     "synonyms": [
-      "persistent storage",
-      "data storage mechanism"
+      "storage",
+      "retention"
     ],
     "sub_requirements": [],
-    "retrieval_text": "persistent data storage mechanism",
+    "retrieval_text": "persistent storage data",
     "source": {
       "document_id": null,
       "file_name": "Basic_SRS_Document.docx",
@@ -2178,9 +2243,11 @@
   },
   {
     "requirement_id": "REQ-045",
+    "id_source": "generated",
     "raw_text": "Access to stored data shall follow user authorization rules.",
-    "normalized_text": "",
-    "type": "functional",
+    "normalized_text": "Access to stored data follows user authorization rules.",
+    "type": "non-functional",
+    "subtype": "security",
     "title": "Authorization for Data Access",
     "actor": [
       "user"
@@ -2189,14 +2256,12 @@
       "access"
     ],
     "entities": [
-      "data"
+      "stored data"
     ],
     "inputs": [
       "user authorization rules"
     ],
-    "outputs": [
-      "access to stored data"
-    ],
+    "outputs": [],
     "preconditions": [],
     "postconditions": [],
     "conditions": [],
@@ -2206,9 +2271,12 @@
       "authorization",
       "access control"
     ],
-    "synonyms": [],
+    "synonyms": [
+      "access control",
+      "security rules"
+    ],
     "sub_requirements": [],
-    "retrieval_text": "user access authorization data",
+    "retrieval_text": "user authorization rules access stored data",
     "source": {
       "document_id": null,
       "file_name": "Basic_SRS_Document.docx",
@@ -2223,10 +2291,12 @@
   },
   {
     "requirement_id": "REQ-046",
+    "id_source": "generated",
     "raw_text": "Invalid or incomplete records shall not be accepted as valid application data.",
     "normalized_text": "Invalid or incomplete records shall not be accepted as valid application data.",
-    "type": "constraint",
-    "title": "Valid Data Acceptance",
+    "type": "non-functional",
+    "subtype": "data management",
+    "title": "Data Validation",
     "actor": [
       "application"
     ],
@@ -2234,40 +2304,32 @@
       "accept data"
     ],
     "entities": [
-      "record",
-      "application data"
+      "records",
+      "data"
     ],
     "inputs": [
-      "record"
+      "invalid or incomplete records"
     ],
     "outputs": [
-      "validity status"
+      "invalid data"
     ],
-    "preconditions": [
-      "existence of record"
-    ],
-    "postconditions": [
-      "data validity determined"
-    ],
-    "conditions": [
-      "incomplete record"
-    ],
-    "constraints": [
-      "data completeness"
-    ],
+    "preconditions": [],
+    "postconditions": [],
+    "conditions": [],
+    "constraints": [],
     "error_conditions": [
-      "invalid record"
+      "invalid or incomplete records"
     ],
     "domain_terms": [
-      "data integrity",
-      "validity"
+      "data validation",
+      "data integrity"
     ],
     "synonyms": [
-      "invalid data",
-      "incomplete data"
+      "data validation",
+      "data integrity"
     ],
     "sub_requirements": [],
-    "retrieval_text": "invalid record, incomplete record, valid application data",
+    "retrieval_text": "data validation, invalid records, application data",
     "source": {
       "document_id": null,
       "file_name": "Basic_SRS_Document.docx",
@@ -2282,10 +2344,12 @@
   },
   {
     "requirement_id": "REQ-047",
+    "id_source": "generated",
     "raw_text": "The system shall be considered acceptable when the following conditions are satisfied:",
-    "normalized_text": "The system shall be considered acceptable when the following conditions are satisfied:",
+    "normalized_text": "system considered acceptable when conditions satisfied",
     "type": "non-functional",
-    "title": "Acceptability",
+    "subtype": "acceptability",
+    "title": "Acceptability Criteria",
     "actor": [
       "system"
     ],
@@ -2298,14 +2362,17 @@
     "preconditions": [],
     "postconditions": [],
     "conditions": [
-      "acceptable"
+      "system considered acceptable"
     ],
     "constraints": [],
     "error_conditions": [],
-    "domain_terms": [],
+    "domain_terms": [
+      "system",
+      "acceptability"
+    ],
     "synonyms": [],
     "sub_requirements": [],
-    "retrieval_text": "",
+    "retrieval_text": "system acceptability",
     "source": {
       "document_id": null,
       "file_name": "Basic_SRS_Document.docx",

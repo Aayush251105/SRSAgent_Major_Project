@@ -69,7 +69,10 @@ class RequirementDetector:
                         for key in ("table", "row", "column"):
                             if key in paragraph:
                                 source[key] = paragraph[key]
-                        candidates.append({"text": segment, "source": source})
+                        candidate = {"text": segment, "source": source}
+                        if paragraph.get("source_requirement_id"):
+                            candidate["source_requirement_id"] = paragraph["source_requirement_id"]
+                        candidates.append(candidate)
 
         else:
             raise ValueError(
@@ -85,7 +88,7 @@ class RequirementDetector:
         segments: List[str] = []
         for line in lines:
             list_items = re.split(
-                r"(?<=[.;])\s+(?=(?:REQ[- ]?\d+|\d+(?:\.\d+)*[.)]?|[-*•])\s+)",
+                r"(?<=[.;])\s+(?=(?:[A-Za-z]{1,8}[-_]\d+(?:[.-]\d+)*|\d+(?:\.\d+)*[.)]?|[-*•])\s*[:.)-]?\s+)",
                 line,
             )
             for list_item in list_items:

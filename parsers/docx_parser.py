@@ -1,4 +1,5 @@
 from pathlib import Path
+import re
 from typing import Dict, List
 
 from docx import Document
@@ -12,6 +13,10 @@ class DOCXParser:
     Extracts paragraphs from DOCX documents while preserving their
     order and basic heading structure for later requirement traceability.
     """
+
+    REQUIREMENT_ID_PATTERN = re.compile(
+        r"^\s*\(?([A-Za-z][A-Za-z0-9_-]*[-_]\d+(?:[.-]\d+)*)\)?\s*[:.)-]?\s*$"
+    )
 
     def parse(self, file_path: str) -> Dict:
         path = Path(file_path)
@@ -45,12 +50,24 @@ class DOCXParser:
                 table_index += 1
                 table = Table(child, document)
                 for row_index, row in enumerate(table.rows, start=1):
-                    for column_index, cell in enumerate(row.cells, start=1):
-                        text = " ".join(
+                    cell_texts = [
+                        " ".join(
                             item.text.strip()
                             for item in cell.paragraphs
                             if item.text.strip()
                         )
+                        for cell in row.cells
+                    ]
+                    row_requirement_id = next(
+                        (
+                            match.group(1)
+                            for cell_text in cell_texts
+                            if (match := self.REQUIREMENT_ID_PATTERN.match(cell_text))
+                        ),
+                        None,
+                    )
+                    for column_index, cell in enumerate(row.cells, start=1):
+                        text = cell_texts[column_index - 1]
                         if text:
                             paragraphs.append({
                                 "paragraph": None,
@@ -59,6 +76,7 @@ class DOCXParser:
                                 "table": table_index,
                                 "row": row_index,
                                 "column": column_index,
+                                "source_requirement_id": row_requirement_id,
                             })
 
         return {

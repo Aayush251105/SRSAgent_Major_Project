@@ -4,6 +4,18 @@ Extract requirement records from plain text, selectable-text PDFs, and DOCX file
 The program returns a JSON array in source order and assigns IDs as `REQ-001`,
 `REQ-002`, and so on.
 
+If a document labels a requirement with an ID such as `FR-01.2` or `NFR-02.1`,
+that source ID is retained as `requirement_id` and `id_source` is set to `source`.
+Unlabeled requirements receive generated `REQ-...` IDs and
+`id_source: "generated"`.
+
+Requirement classification uses `type` with exactly three base values:
+`functional`, `non-functional`, or `other`. `subtype` carries the more specific
+category, for example `type: "functional", subtype: "interface"` (read as
+“functional - interface”). FR and NFR ID prefixes determine the base type for
+those labeled requirements. For literal plain-text input, `type` is `other` and
+`subtype` records the specific category inferred from the sentence.
+
 ## Setup
 
 ```powershell

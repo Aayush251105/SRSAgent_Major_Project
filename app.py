@@ -99,6 +99,9 @@ def main(input_data, progress_callback=None):
     else:
         candidates = detector.detect_text(document["text"])
 
+    for candidate in candidates:
+        candidate["input_kind"] = "text" if input_type == "text" else "document"
+
     if not candidates:
         if progress_callback:
             progress_callback("stage", {"message": "No requirement candidates found"})
@@ -130,6 +133,7 @@ class TerminalProgress:
         self.completed_durations = []
         self.total = 0
         self.current_index = None
+        self.current_requirement_id = None
         self.current_started_at = None
         self._stop_ticker = threading.Event()
         self._ticker = None
@@ -160,7 +164,7 @@ class TerminalProgress:
                 eta = f"ETA ~{self._format_duration(eta_seconds)}"
             line = (
                 f"\r[{bar}] {completed}/{self.total} complete | "
-                f"REQ-{self.current_index:03d} generating | "
+                f"{self.current_requirement_id} generating | "
                 f"current {self._format_duration(current_elapsed)} | "
                 f"elapsed {self._format_duration(elapsed)} | {eta}"
             )
@@ -201,6 +205,7 @@ class TerminalProgress:
                 print(f"  {index:03d}. {candidate['text']}{location}", file=sys.stderr)
         elif event == "requirement_start":
             self.current_index = payload["index"]
+            self.current_requirement_id = payload["requirement_id"]
             self.current_started_at = time.monotonic()
             self._start_ticker()
         elif event == "requirement_done":

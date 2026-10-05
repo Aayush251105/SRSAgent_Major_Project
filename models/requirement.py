@@ -1,5 +1,5 @@
 from pydantic import BaseModel, Field
-from typing import List, Optional
+from typing import List, Literal, Optional
 
 
 class SourceLocation(BaseModel):
@@ -20,6 +20,7 @@ class Requirement(BaseModel):
     """Canonical representation of a single requirement used by downstream agents."""
 
     requirement_id: str = ""
+    id_source: Literal["source", "generated"] = "generated"
 
     # Original text is preserved exactly for traceability.
     raw_text: str
@@ -27,7 +28,8 @@ class Requirement(BaseModel):
     # LLM-derived interpretation used for semantic processing and retrieval.
     normalized_text: str
 
-    type: str
+    type: Literal["functional", "non-functional", "other"]
+    subtype: str = "general"
     title: str
 
     # Keep every extraction array present in the model response. Empty arrays
