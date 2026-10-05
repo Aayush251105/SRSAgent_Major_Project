@@ -80,16 +80,38 @@ class RequirementDetector:
 
     @staticmethod
     def _split_text(text: str) -> List[str]:
-        """Split extracted text into lines and common list-item segments."""
+        """Split text at line, list, and independent requirement boundaries."""
         lines = [line.strip() for line in text.splitlines() if line.strip()]
         segments: List[str] = []
         for line in lines:
-            pieces = re.split(
+            list_items = re.split(
                 r"(?<=[.;])\s+(?=(?:REQ[- ]?\d+|\d+(?:\.\d+)*[.)]?|[-*•])\s+)",
                 line,
             )
-            segments.extend(piece.strip() for piece in pieces if piece.strip())
+            for list_item in list_items:
+                list_item = list_item.strip()
+                if not list_item:
+                    continue
+
+                # Split adjacent sentences only when each sentence independently
+                # contains requirement language. This avoids breaking a single
+                # requirement whose second sentence provides context or an outcome.
+                sentences = re.split(r"(?<=[.!?])\s+(?=[A-Z])", list_item)
+                if len(sentences) > 1 and all(
+                    RequirementDetector._contains_requirement_language(sentence)
+                    for sentence in sentences
+                ):
+                    segments.extend(sentence.strip() for sentence in sentences)
+                else:
+                    segments.append(list_item)
         return segments
+
+    @staticmethod
+    def _contains_requirement_language(text: str) -> bool:
+        return any(
+            re.search(pattern, text.strip(), re.IGNORECASE)
+            for pattern in RequirementDetector.REQUIREMENT_PATTERNS
+        )
 
     def detect_text(self, text: str) -> List[Dict]:
         """Detect requirements in plain text using the same rules as files."""

@@ -30,26 +30,28 @@ class Requirement(BaseModel):
     type: str
     title: str
 
-    actor: List[str] = Field(default_factory=list)
-    actions: List[str] = Field(default_factory=list)
-    entities: List[str] = Field(default_factory=list)
+    # Keep every extraction array present in the model response. Empty arrays
+    # are valid, but must be an explicit extraction decision.
+    actor: List[str] = Field(...)
+    actions: List[str] = Field(...)
+    entities: List[str] = Field(...)
 
-    inputs: List[str] = Field(default_factory=list)
-    outputs: List[str] = Field(default_factory=list)
+    inputs: List[str] = Field(...)
+    outputs: List[str] = Field(...)
 
-    preconditions: List[str] = Field(default_factory=list)
-    postconditions: List[str] = Field(default_factory=list)
-    conditions: List[str] = Field(default_factory=list)
+    preconditions: List[str] = Field(...)
+    postconditions: List[str] = Field(...)
+    conditions: List[str] = Field(...)
 
-    constraints: List[str] = Field(default_factory=list)
-    error_conditions: List[str] = Field(default_factory=list)
+    constraints: List[str] = Field(...)
+    error_conditions: List[str] = Field(...)
 
     # Terms and alternative wording improve lexical and semantic retrieval.
-    domain_terms: List[str] = Field(default_factory=list)
-    synonyms: List[str] = Field(default_factory=list)
+    domain_terms: List[str] = Field(...)
+    synonyms: List[str] = Field(...)
 
     # Complex requirements can be decomposed into smaller implementation concepts.
-    sub_requirements: List[str] = Field(default_factory=list)
+    sub_requirements: List[str] = Field(...)
 
     # Search-oriented representation consumed by the Retrieval Agent.
     retrieval_text: str
