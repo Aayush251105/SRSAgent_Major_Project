@@ -5,6 +5,7 @@ import time
 
 from config import LLMConfig
 from agents.srs_agent import SRSAgent
+from agents.candidate_judge import CandidateJudge
 from llm.ollama_provider import OllamaProvider
 from llm.grok_provider import GrokProvider
 from parsers.input_adapter import InputAdapter
@@ -13,12 +14,12 @@ from parsers.docx_parser import DOCXParser
 from processors.requirement_detector import RequirementDetector
 
 
-def create_provider(config: LLMConfig):
+def create_provider(config: LLMConfig, model_override: str | None = None):
     """Create the configured LLM provider."""
 
     if config.provider == "ollama":
         return OllamaProvider(
-            model=config.model,
+            model=model_override or config.model,
             host=config.ollama_host
         )
 
@@ -26,7 +27,7 @@ def create_provider(config: LLMConfig):
         if not config.grok_api_key:
             raise ValueError("Set XAI_API_KEY in SRSAgent/.env to use the Grok provider")
         return GrokProvider(
-            model=config.model,
+            model=model_override or config.model,
             api_key=config.grok_api_key
         )
 
@@ -111,14 +112,46 @@ def main(input_data, progress_callback=None):
         progress_callback("candidates", {"candidates": candidates})
 
     provider = create_provider(config)
+    if config.provider == "ollama":
+        judge_model = config.judge_model or "qwen2.5:3b"
+    else:
+        judge_model = config.model
     if progress_callback:
         progress_callback("stage", {
-            "message": f"Starting {len(candidates)} extraction call(s) with {config.provider}/{config.model}"
+            "message": (
+                f"Reviewing {len(candidates)} candidate(s): strong-signal fast path, "
+                f"then {config.provider}/{judge_model} for ambiguous items"
+            )
         })
+
+    judge_provider = create_provider(config, model_override=judge_model)
+    fallback_provider = provider if judge_model != config.model else None
+    candidate_judge = CandidateJudge(judge_provider, fallback_provider=fallback_provider)
+    candidates = candidate_judge.filter_candidates(
+        candidates,
+        progress_callback=progress_callback,
+    )
+    if progress_callback:
+        progress_callback("stage", {
+            "message": (
+                f"Fast accepted {candidate_judge.fast_kept_count}; quickly judged "
+                f"{candidate_judge.last_judged_count}; kept {len(candidates)} item(s) for generation; "
+                f"{getattr(candidate_judge, 'last_uncertain_count', 0)} uncertain item(s) are review-only"
+            )
+        })
+    if not candidates:
+        if progress_callback:
+            progress_callback("stage", {"message": "The candidate judge found no requirements"})
+        return []
 
     agent = SRSAgent(
         llm_provider=provider
     )
+
+    if progress_callback:
+        progress_callback("stage", {
+            "message": f"Generating structured JSON for {len(candidates)} retained candidate(s)"
+        })
 
     requirements = agent.extract(candidates, progress_callback=progress_callback)
 
@@ -135,6 +168,10 @@ class TerminalProgress:
         self.current_index = None
         self.current_requirement_id = None
         self.current_started_at = None
+        self.mode = "requirements"
+        self.judge_batch = 0
+        self.judge_batches = 0
+        self.review_items = []
         self._stop_ticker = threading.Event()
         self._ticker = None
         self._lock = threading.Lock()
@@ -150,6 +187,16 @@ class TerminalProgress:
 
     def _render_model_progress(self):
         with self._lock:
+            if self.mode == "judge":
+                elapsed = time.monotonic() - self.current_started_at
+                print(
+                    f"\r[Candidate judge batch {self.judge_batch}/{self.judge_batches}] "
+                    f"elapsed {self._format_duration(elapsed)}",
+                    end="",
+                    file=sys.stderr,
+                    flush=True,
+                )
+                return
             completed = len(self.completed_durations)
             elapsed = time.monotonic() - self.started_at
             bar_width = 24
@@ -198,13 +245,33 @@ class TerminalProgress:
                 print("  ... (preview limited to 2,000 characters)", file=sys.stderr)
         elif event == "candidates":
             self.total = len(payload["candidates"])
-            print(f"[step] Found {self.total} requirement candidate(s):", file=sys.stderr)
+            confidence_counts = {
+                confidence: sum(
+                    item.get("detection_confidence") == confidence
+                    for item in payload["candidates"]
+                )
+                for confidence in ("high", "medium", "low")
+            }
+            print(
+                f"[step] Found {self.total} candidate(s): "
+                f"{confidence_counts['high']} high, {confidence_counts['medium']} medium, "
+                f"{confidence_counts['low']} low",
+                file=sys.stderr,
+            )
             for index, candidate in enumerate(payload["candidates"], start=1):
                 source = candidate.get("source") or {}
                 location = f" | source={source}" if source else ""
-                print(f"  {index:03d}. {candidate['text']}{location}", file=sys.stderr)
+                confidence = candidate.get("detection_confidence", "high").upper()
+                reason = candidate.get("detection_reason", "")
+                print(
+                    f"  {index:03d}. [{confidence}] {candidate['text']}"
+                    f" | reason={reason}{location}",
+                    file=sys.stderr,
+                )
         elif event == "requirement_start":
+            self.mode = "requirements"
             self.current_index = payload["index"]
+            self.total = payload["total"]
             self.current_requirement_id = payload["requirement_id"]
             self.current_started_at = time.monotonic()
             self._start_ticker()
@@ -230,6 +297,39 @@ class TerminalProgress:
                 file=sys.stderr,
                 flush=True,
             )
+        elif event == "judge_batch_start":
+            self.mode = "judge"
+            self.judge_batch = payload["batch"]
+            self.judge_batches = payload["batches"]
+            self.current_started_at = time.monotonic()
+            self._start_ticker()
+        elif event == "judge_batch_done":
+            self._stop_current_ticker()
+            print(
+                f"[judge] Batch {payload['batch']}/{payload['batches']}: "
+                f"kept {payload['kept_count']}, discarded {payload['discarded_count']}, "
+                f"uncertain {payload.get('uncertain_count', 0)} (review only)",
+                file=sys.stderr,
+            )
+            for decision in payload.get("decisions", []):
+                if decision["decision"] == "uncertain":
+                    self.review_items.append(decision)
+                print(
+                    f"  {decision['candidate_id']}: {decision['decision']} — {decision['reason']}",
+                    file=sys.stderr,
+                )
+            if payload.get("failure"):
+                print(
+                    f"  Judge error; missing decisions sent to review: {payload['failure']}",
+                    file=sys.stderr,
+                    flush=True,
+                )
+            elif payload.get("fallback"):
+                print(
+                    f"  {payload['fallback']}",
+                    file=sys.stderr,
+                    flush=True,
+                )
 
     def finish(self, count):
         print(
@@ -267,5 +367,13 @@ if __name__ == "__main__":
     output_path = output_dir / f"{output_stem}_requirements.txt"
     output_path.write_text(output_text + "\n", encoding="utf-8")
 
+    review_path = output_dir / f"{output_stem}_candidate_review.txt"
+    review_text = json.dumps(progress.review_items, indent=2, ensure_ascii=False)
+    review_path.write_text(review_text + "\n", encoding="utf-8")
+
     print(f"[saved] Full JSON-formatted text output: {output_path}", file=sys.stderr)
+    print(
+        f"[saved] Candidate review items ({len(progress.review_items)}): {review_path}",
+        file=sys.stderr,
+    )
     print(output_text)

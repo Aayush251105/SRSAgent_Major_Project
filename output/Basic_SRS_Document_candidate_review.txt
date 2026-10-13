@@ -1,0 +1,86 @@
+[
+  {
+    "candidate_id": "C-0083",
+    "decision": "uncertain",
+    "confidence": "low",
+    "reason": "The text states that the role-based administration dashboard is provided, but it is not clear if it is a functional or non-functional requirement.",
+    "text": "Role-based administration dashboard.",
+    "source": {
+      "file_name": "Basic_SRS_Document.docx",
+      "paragraph": 118,
+      "style": "List Bullet"
+    },
+    "detection_confidence": "low",
+    "detection_reason": "no explicit requirement signal; sent to LLM judge"
+  },
+  {
+    "candidate_id": "C-0084",
+    "decision": "uncertain",
+    "confidence": "low",
+    "reason": "The text states that advanced search, filtering, and sorting are provided, but it is not clear if it is a functional or non-functional requirement.",
+    "text": "Advanced search, filtering, and sorting.",
+    "source": {
+      "file_name": "Basic_SRS_Document.docx",
+      "paragraph": 119,
+      "style": "List Bullet"
+    },
+    "detection_confidence": "low",
+    "detection_reason": "no explicit requirement signal; sent to LLM judge"
+  },
+  {
+    "candidate_id": "C-0085",
+    "decision": "uncertain",
+    "confidence": "low",
+    "reason": "The text states that email or push notifications are provided, but it is not clear if it is a functional or non-functional requirement.",
+    "text": "Email or push notifications.",
+    "source": {
+      "file_name": "Basic_SRS_Document.docx",
+      "paragraph": 120,
+      "style": "List Bullet"
+    },
+    "detection_confidence": "low",
+    "detection_reason": "no explicit requirement signal; sent to LLM judge"
+  },
+  {
+    "candidate_id": "C-0086",
+    "decision": "uncertain",
+    "confidence": "low",
+    "reason": "The text states that automated backups and disaster recovery are provided, but it is not clear if it is a functional or non-functional requirement.",
+    "text": "Audit logging and activity history.",
+    "source": {
+      "file_name": "Basic_SRS_Document.docx",
+      "paragraph": 121,
+      "style": "List Bullet"
+    },
+    "detection_confidence": "low",
+    "detection_reason": "no explicit requirement signal; sent to LLM judge"
+  },
+  {
+    "candidate_id": "C-0087",
+    "decision": "uncertain",
+    "confidence": "low",
+    "reason": "The text states that advanced analytics and visualization are provided, but it is not clear if it is a functional or non-functional requirement.",
+    "text": "Automated backups and disaster recovery.",
+    "source": {
+      "file_name": "Basic_SRS_Document.docx",
+      "paragraph": 122,
+      "style": "List Bullet"
+    },
+    "detection_confidence": "low",
+    "detection_reason": "no explicit requirement signal; sent to LLM judge"
+  },
+  {
+    "candidate_id": "C-0088",
+    "decision": "uncertain",
+    "confidence": "low",
+    "reason": "The text states that system feedback and reporting are provided, but it is not clear if it is a functional or non-functional requirement.",
+    "text": "Advanced analytics and visualization.",
+    "source": {
+      "file_name": "Basic_SRS_Document.docx",
+      "paragraph": 123,
+      "style": "List Bullet"
+    },
+    "detection_confidence": "low",
+    "detection_reason": "no explicit requirement signal; sent to LLM judge"
+  }
+]

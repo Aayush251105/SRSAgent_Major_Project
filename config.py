@@ -15,6 +15,7 @@ class LLMConfig:
 
     provider: str = os.getenv("LLM_PROVIDER", "ollama").strip().lower()
     model: str = os.getenv("LLM_MODEL", "llama3.1")
+    judge_model: str = os.getenv("JUDGE_MODEL", "").strip()
 
     ollama_host: str = os.getenv(
         "OLLAMA_HOST",

@@ -30,6 +30,13 @@ class Requirement(BaseModel):
 
     type: Literal["functional", "non-functional", "other"]
     subtype: str = "general"
+    detection_confidence: Literal["high", "medium", "low"] = "high"
+    detection_reason: str = ""
+    candidate_id: str = ""
+    candidate_decision: Literal["keep", "uncertain"] = "keep"
+    candidate_confidence: Literal["high", "medium", "low"] = "high"
+    candidate_reason: str = ""
+    review_required: bool = False
     title: str
 
     # Keep every extraction array present in the model response. Empty arrays

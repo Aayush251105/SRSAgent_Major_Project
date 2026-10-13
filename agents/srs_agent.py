@@ -48,6 +48,7 @@ class SRSAgent:
                 prompt_source,
                 index,
                 candidate.get("input_kind", "document"),
+                candidate.get("requirement_class", "functional"),
             )
 
             try:
@@ -90,6 +91,13 @@ class SRSAgent:
                 "requirement_id": requirement_id,
                 "id_source": id_source,
                 "raw_text": candidate["text"],
+                "detection_confidence": candidate.get("detection_confidence", "high"),
+                "detection_reason": candidate.get("detection_reason", ""),
+                "candidate_id": candidate.get("candidate_id", ""),
+                "candidate_decision": candidate.get("candidate_decision", "keep"),
+                "candidate_confidence": candidate.get("candidate_confidence", "high"),
+                "candidate_reason": candidate.get("candidate_reason", ""),
+                "review_required": candidate.get("review_required", False),
                 "source": SourceLocation.model_validate(candidate.get("source", {})),
             })
             requirements.append(requirement)
@@ -179,9 +187,14 @@ class SRSAgent:
         text = f"{raw_text} {subtype}".lower()
         quality_terms = (
             "performance", "response time", "latency", "throughput", "scalability",
-            "security", "secure", "authentication", "authorization", "availability",
-            "reliability", "usability", "accessible", "maintainability", "compatibility",
-            "portability", "privacy", "confidentiality", "resource constraint",
+            "security", "secure", "availability",
+            "uptime", "reliability", "usability", "accessible", "accessibility",
+            "maintainability", "compatibility", "portability", "privacy",
+            "confidentiality", "resource constraint", "concurrent users", "milliseconds",
+            "interoperability", "fault tolerance", "data integrity", "auditability",
+            "observability", "memory usage", "resource usage", "cpu usage",
+            "efficiency", "efficient", "processing overhead", "unnecessary processing",
+            "resource utilization", "seconds", "within 99", "capacity", "recover within",
         )
         if any(term in text for term in quality_terms):
             return "non-functional"
@@ -192,8 +205,11 @@ class SRSAgent:
         text = raw_text.lower()
         categories = (
             ("security", ("password", "authentication", "authorization", "secure", "sensitive", "access control")),
-            ("performance", ("response time", "within", "seconds", "latency", "load", "throughput", "responsive")),
+            ("performance", ("response time", "within", "seconds", "latency", "load", "throughput", "responsive", "efficiency", "processing overhead", "unnecessary processing")),
+            ("scalability", ("scalability", "scalable", "concurrent users", "capacity")),
+            ("reliability", ("reliability", "recover", "recovery", "uptime", "fault tolerance")),
             ("usability", ("readable", "navigation", "user-friendly", "feedback", "accessibility")),
+            ("accessibility", ("accessibility", "accessible", "screen reader", "keyboard navigation")),
             ("availability", ("available", "availability", "uptime", "recover")),
             ("compatibility", ("browser", "compatible", "http", "https", "platform")),
             ("data management", ("database", "record", "data", "storage", "schema")),
@@ -287,6 +303,7 @@ class SRSAgent:
         source: dict,
         index: int,
         input_kind: str,
+        requirement_class: str = "functional",
     ) -> str:
         """Build the extraction prompt while preserving the original text."""
 
@@ -325,6 +342,12 @@ Rules:
   classification in subtype. For SRS files, classify as functional or non-functional
   based on the requirement's purpose. An FR-prefixed ID means functional; an
   NFR-prefixed ID means non-functional.
+- Candidate classification hint: {requirement_class}. Use the requirement's
+  actual meaning to confirm the type; preserve explicit FR/NFR IDs as authoritative.
+- Extract functional requirements and measurable non-functional quality
+  constraints as distinct requirements. Do not change raw_text or split a single
+  source paragraph into separate records; represent its related behaviors in
+  sub_requirements when appropriate.
 - source should contain the provided source location.
 
 Input kind: {input_kind}

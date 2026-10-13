@@ -16,6 +16,26 @@ category, for example `type: "functional", subtype: "interface"` (read as
 those labeled requirements. For literal plain-text input, `type` is `other` and
 `subtype` records the specific category inferred from the sentence.
 
+The detector keeps each DOCX paragraph or table cell as one candidate, preserving
+its complete raw text. For plain text and PDF, blank lines define paragraphs;
+multiple adjacent lines stay together unless they carry explicit requirement IDs.
+The detector recognizes common functional wording and non-functional quality
+attributes such as response time, availability, reliability, security,
+accessibility, and measurable limits.
+
+Candidates with explicit IDs or strong requirement signals use a fast rule-based
+approval path and go directly to JSON extraction. Ambiguous candidates go through
+the LLM judge in batches (up to twenty, subject to a prompt-size limit). Only
+judge-approved items reach extraction. Uncertain items, including missing
+decisions after a judge error, are excluded and saved to
+`<input>_candidate_review.txt`. Obvious titles, headings, and document metadata
+are filtered where they can be identified from text or DOCX style.
+
+Outputs include heuristic `detection_confidence` / `detection_reason` and the
+LLM's `candidate_decision`, `candidate_confidence`, and `candidate_reason`.
+`review_required` is true for uncertain candidates or any non-high-confidence
+judgment. The candidate decision is included in the final record for traceability.
+
 ## Setup
 
 ```powershell
@@ -26,8 +46,17 @@ pip install -r requirements.txt
 Copy-Item .env.example .env
 ```
 
-The default provider is Ollama. Start Ollama and pull the configured model
-(`ollama pull llama3.1`), or edit `.env` to use Grok and set `XAI_API_KEY`.
+The default provider is Ollama. Pull both configured models:
+
+```powershell
+ollama pull llama3.1
+ollama pull qwen2.5:3b
+```
+
+`LLM_MODEL` generates the final JSON; `JUDGE_MODEL` reviews ambiguous
+candidates. If the smaller judge model is unavailable or errors, the pipeline
+falls back to `LLM_MODEL`. Set `JUDGE_MODEL` in `.env` to another installed
+Ollama model. With Grok, the configured Grok model handles both roles.
 
 ## Run
 
