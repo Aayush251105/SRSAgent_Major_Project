@@ -16,10 +16,15 @@ class OllamaProvider(LLMProvider):
     def __init__(
         self,
         model: str = "llama3.1",
-        host: str = "http://localhost:11434"
+        host: str = "http://localhost:11434",
+        temperature: float = 0.0,
+        seed: int = 42,
+        num_ctx: int = 8192,
     ):
         self.model = model
         self.client = Client(host=host)
+        # Deterministic decoding: the same SRS yields the same requirements.
+        self.options = {"temperature": temperature, "seed": seed, "num_ctx": num_ctx}
 
     def generate_structured(
         self,
@@ -34,7 +39,8 @@ class OllamaProvider(LLMProvider):
                     "content": prompt
                 }
             ],
-            format=schema.model_json_schema()
+            format=schema.model_json_schema(),
+            options=self.options,
         )
 
         return schema.model_validate_json(

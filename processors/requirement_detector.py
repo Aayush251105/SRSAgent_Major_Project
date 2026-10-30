@@ -1,14 +1,28 @@
 import re
-from typing import Dict, List
+from typing import Dict, List, Optional
+
+from processors.segmenter import (
+    SegmentationReport,
+    blocks_from_docx_dicts,
+    blocks_from_pdf,
+    blocks_from_text,
+    leading_requirement_id,
+    segment,
+)
 
 
 class RequirementDetector:
     """
     Identifies text that is likely to represent a software requirement.
 
-    This stage only detects candidates. Semantic extraction and normalization
-    are handled by the SRS Agent.
+    Documents are first segmented by structure (processors.segmenter): a
+    requirement keeps its list items and tables, labelled child requirements
+    keep their parent ID, and non-requirement sections are skipped and
+    reported in `last_report`.  This stage only detects candidates; semantic
+    extraction is handled by the SRS Agent.
     """
+
+    last_report: Optional[SegmentationReport] = None
 
     REQUIREMENT_PATTERNS = [
         r"\bshall\b",
@@ -50,10 +64,6 @@ class RequirementDetector:
         "schedule", "cancel", "configure", "save", "verify", "check", "track",
     )
 
-    SOURCE_ID_PATTERN = re.compile(
-        r"^\s*(?:[-*•]\s*)?\(?[A-Za-z][A-Za-z0-9_-]*[-_]\d+(?:[.-]\d+)*\)?(?=\s|:|\.|\))"
-    )
-
     DOCUMENT_METADATA_PATTERNS = (
         r"^software requirements specification\b",
         r"^srs document\b",
@@ -90,10 +100,11 @@ class RequirementDetector:
         if not cleaned:
             return None
 
-        source_id_match = cls.SOURCE_ID_PATTERN.match(cleaned)
-        if source_id_match and not cleaned[source_id_match.end():].strip(" :.)-"):
-            return None
-        if source_id_match:
+        source_id = leading_requirement_id(cleaned)
+        if source_id:
+            rest = cleaned.split(source_id, 1)[1].strip(" :.)-—–*")
+            if not rest:
+                return None
             return "high", "contains a source requirement ID"
 
         for patterns in cls.REQUIREMENT_SIGNAL_PATTERNS["high"].values():
@@ -191,10 +202,7 @@ class RequirementDetector:
 
     @classmethod
     def _requirement_class(cls, text: str, source_requirement_id: str | None = None) -> str:
-        identifier = (source_requirement_id or "").upper()
-        if not identifier:
-            match = cls.SOURCE_ID_PATTERN.match(text)
-            identifier = match.group(0).upper() if match else ""
+        identifier = (source_requirement_id or leading_requirement_id(text) or "").upper()
         if identifier.startswith(("NFR", "NF", "NFRQ", "NONFUNC", "QUALITY")):
             return "non-functional"
         if identifier.startswith(("F-", "F_", "FR", "FREQ", "FUNC", "FUNCTIONAL")):
@@ -227,66 +235,38 @@ class RequirementDetector:
         """
         Extract candidate requirements while preserving their source location.
         """
-
-        candidates = []
-
         if source_type == "pdf":
-            for page in document["pages"]:
-                segments = self._split_text(page["text"])
-
-                for segment in segments:
-                    candidate = self._candidate(segment, {
-                        "file_name": document["file_name"],
-                        "page": page["page"],
-                    })
-                    if candidate:
-                        candidates.append(candidate)
-
+            blocks = blocks_from_pdf(document)
         elif source_type == "docx":
-            for paragraph in document["paragraphs"]:
-                source = {
-                    "file_name": document["file_name"],
-                    "paragraph": paragraph.get("paragraph"),
-                    "style": paragraph.get("style"),
-                }
-                for key in ("table", "row", "column"):
-                    if key in paragraph:
-                        source[key] = paragraph[key]
-                if paragraph.get("source_requirement_id"):
-                    source["source_requirement_id"] = paragraph["source_requirement_id"]
-                candidate = self._candidate(paragraph["text"], source)
-                if candidate:
-                    candidates.append(candidate)
-
+            blocks = blocks_from_docx_dicts(document["blocks"])
         else:
             raise ValueError(
                 f"Unsupported document source type: {source_type}"
             )
+        return self._from_blocks(blocks, {"file_name": document["file_name"]})
 
+    def _from_blocks(self, blocks, base_source: Dict) -> List[Dict]:
+        segments, self.last_report = segment(blocks)
+        candidates = []
+        for seg in segments:
+            source = dict(base_source)
+            for key, value in seg.location.items():
+                if key in ("paragraph", "paragraph_end", "page", "page_end", "table", "row", "column", "style"):
+                    source[key] = value
+            if seg.section:
+                source["section"] = seg.section
+            if seg.requirement_id:
+                source["source_requirement_id"] = seg.requirement_id
+            candidate = self._candidate(seg.text, source)
+            if candidate:
+                if seg.parent_id:
+                    candidate["parent_requirement_id"] = seg.parent_id
+                candidate["structure"] = {
+                    "list_items": sum(1 for kind, _ in seg.lines if kind == "item"),
+                    "lines": len(seg.lines),
+                }
+                candidates.append(candidate)
         return candidates
-
-    @staticmethod
-    def _split_text(text: str) -> List[str]:
-        """Keep prose paragraphs intact and split only explicitly labeled lines."""
-        blocks = [block for block in re.split(r"\n\s*\n+", text) if block.strip()]
-        segments: List[str] = []
-        explicit_id = re.compile(
-            r"^\s*(?:[-*]\s*)?\(?[A-Za-z][A-Za-z0-9_-]*[-_]\d+(?:[.-]\d+)*\)?(?:\s|:|\.)"
-        )
-        for block in blocks:
-            lines = [" ".join(line.split()) for line in block.splitlines() if line.strip()]
-            if any(explicit_id.match(line) for line in lines):
-                current: List[str] = []
-                for line in lines:
-                    if explicit_id.match(line) and current:
-                        segments.append(" ".join(current))
-                        current = []
-                    current.append(line)
-                if current:
-                    segments.append(" ".join(current))
-            else:
-                segments.append(" ".join(lines))
-        return segments
 
     @staticmethod
     def _contains_requirement_language(text: str) -> bool:
@@ -296,10 +276,5 @@ class RequirementDetector:
         )
 
     def detect_text(self, text: str) -> List[Dict]:
-        """Detect requirements in plain text using the same rules as files."""
-        candidates = []
-        for segment in self._split_text(text):
-            candidate = self._candidate(segment, {})
-            if candidate:
-                candidates.append(candidate)
-        return candidates
+        """Detect requirements in plain text or Markdown using the same rules as files."""
+        return self._from_blocks(blocks_from_text(text), {})

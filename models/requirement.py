@@ -14,6 +14,9 @@ class SourceLocation(BaseModel):
     table: Optional[int] = None
     row: Optional[int] = None
     column: Optional[int] = None
+    # A requirement that spans several paragraphs/pages (its list items, tables).
+    paragraph_end: Optional[int] = None
+    page_end: Optional[int] = None
 
 
 class Requirement(BaseModel):
@@ -21,6 +24,8 @@ class Requirement(BaseModel):
 
     requirement_id: str = ""
     id_source: Literal["source", "generated"] = "generated"
+    # Labelled child requirements (FR-01.1 under heading "FR-01: ...") keep their parent.
+    parent_requirement_id: Optional[str] = None
 
     # Original text is preserved exactly for traceability.
     raw_text: str

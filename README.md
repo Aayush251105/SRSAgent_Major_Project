@@ -16,12 +16,47 @@ category, for example `type: "functional", subtype: "interface"` (read as
 those labeled requirements. For literal plain-text input, `type` is `other` and
 `subtype` records the specific category inferred from the sentence.
 
-The detector keeps each DOCX paragraph or table cell as one candidate, preserving
-its complete raw text. For plain text and PDF, blank lines define paragraphs;
-multiple adjacent lines stay together unless they carry explicit requirement IDs.
-The detector recognizes common functional wording and non-functional quality
-attributes such as response time, availability, reliability, security,
-accessibility, and measurable limits.
+### Structure-aware segmentation
+
+`processors/segmenter.py` first turns every input (DOCX, PDF, plain text or Markdown) into ordered blocks: headings, paragraphs, list items and tables. It then groups those blocks into requirements, so **a requirement keeps its lists and tables**:
+
+- **Labelled requirements.** A block that starts with a requirement ID (`FR-002 — …`, `NFR-01.1: …`) starts a requirement. Every paragraph, bullet and table after it belongs to that requirement, until the next ID or heading. Lists and tables are kept in `raw_text` as `- ` lines; table rows are written as `Header: value; Header: value`.
+- **Parents and children.** An ID'd heading (`3.1 FR-01: User Authentication`) is a parent requirement. ID'd items under it get `parent_requirement_id`.
+- **Unlabelled text.** A sentence ending in ":" owns the list or table that follows it. Other paragraphs and bullets stand alone.
+- **Requirement tables.** A table with an ID column (`ID | Type | Requirement`) gives one requirement per row.
+- **Skipped content.** Non-requirement sections and key/value tables (document metadata, glossaries) are skipped:
+  - skipped sections are purpose, scope, definitions/glossary, audience, references, product overview, assumptions, risks, future enhancements, revision history, contents and appendix;
+  - a heading that mentions requirements is never skipped;
+  - text with an explicit ID is never skipped;
+  - all skipped content is listed in the extraction report, so it can be reviewed.
+- **Missing lists.** An introduction ending in ":" with nothing after it is reported as a warning, because the content it announces is missing.
+- **Strict IDs.** An ID needs a label separator or a known prefix (FR, NFR, REQ, …), so `SHA-256 hashing shall …` or `UTF-8 …` are not taken as IDs.
+
+The detector recognizes common functional wording and non-functional quality attributes, such as response time, availability, reliability, security, accessibility and measurable limits.
+
+Every run also writes `<input>_extraction_report.json`, which contains:
+- the skipped sections, with their text;
+- the skipped tables;
+- missing-list warnings;
+- the candidate judge's review items;
+- extraction failures;
+- counts per stage.
+
+If extracting a requirement fails twice, the failure is recorded there and the run continues; it doesn't abort. Ollama runs deterministically (temperature 0, fixed seed). An empty `normalized_text` or `retrieval_text` from the model is filled from the source text.
+
+### Tests and evaluation
+
+```powershell
+.\.venv\Scripts\python.exe -m pytest tests                     # no LLM needed
+.\.venv\Scripts\python.exe tools\evaluate_extraction.py output\SRS_Library_Management_System_requirements.txt ..\library_traceability_dataset\gold_standard\gold_standard_mapping.json
+```
+
+The evaluation reports:
+- ID recall;
+- spurious requirements;
+- content completeness: every word and number of each gold requirement must appear in the extracted text;
+- empty fields;
+- functional / non-functional type agreement.
 
 Candidates with explicit IDs or strong requirement signals use a fast rule-based
 approval path and go directly to JSON extraction. Ambiguous candidates go through

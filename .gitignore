@@ -25,3 +25,5 @@ outputs/
 
 # Logs
 *.log
+# Test fixtures are data, not generated output
+!tests/fixtures/*.json
