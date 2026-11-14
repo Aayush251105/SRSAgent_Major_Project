@@ -6,6 +6,10 @@ extract).  Nothing is written to any database.
 
     .venv\\Scripts\\python.exe tools\\run_folder.py ..\\SRSAgent_test            # -> ..\\SRSAgent_test\\results
     .venv\\Scripts\\python.exe tools\\run_folder.py ..\\SRSAgent_test results_v2
+    .venv\\Scripts\\python.exe tools\\run_folder.py ..\\SRSAgent_test results_v2 "a.pdf" "b.md"   # only these
+
+When file names are given, only those documents run, and their entries are
+merged into the output folder's existing summary.json (other entries are kept).
 
 Models come from the usual environment variables (LLM_MODEL, JUDGE_MODEL,
 OLLAMA_HOST).  For each document it writes <name>_requirements.json and
@@ -26,10 +30,15 @@ import app  # noqa: E402
 SUFFIXES = {".pdf", ".docx", ".md", ".markdown", ".txt"}
 
 
-def run(folder: Path, out_name: str = "results") -> list:
+def run(folder: Path, out_name: str = "results", only: list = None) -> list:
     out_dir = folder / out_name
     out_dir.mkdir(exist_ok=True)
-    files = sorted(p for p in folder.iterdir() if p.is_file() and p.suffix.lower() in SUFFIXES)
+    files = all_files = sorted(p for p in folder.iterdir() if p.is_file() and p.suffix.lower() in SUFFIXES)
+    if only:
+        missing = [name for name in only if not (folder / name).is_file()]
+        if missing:
+            sys.exit(f"not found in {folder}: {missing}")
+        files = [p for p in files if p.name in set(only)]
     summary = []
     for path in files:
         print(f"\n=== {path.name}", flush=True)
@@ -46,6 +55,8 @@ def run(folder: Path, out_name: str = "results") -> list:
         seconds = round(time.time() - started, 1)
 
         stem = re.sub(r"[^A-Za-z0-9._-]+", "_", path.stem).strip("_")
+        if sum(1 for p in all_files if p.stem == path.stem) > 1:   # SRS.md and SRS.pdf
+            stem += "_" + path.suffix.lstrip(".").lower()
         data = [r.model_dump(mode="json") for r in requirements]
         (out_dir / f"{stem}_requirements.json").write_text(
             json.dumps(data, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
@@ -74,7 +85,12 @@ def run(folder: Path, out_name: str = "results") -> list:
         })
         print(json.dumps(summary[-1], indent=1), flush=True)
 
-    (out_dir / "summary.json").write_text(json.dumps(summary, indent=2) + "\n", encoding="utf-8")
+    summary_path = out_dir / "summary.json"
+    if only and summary_path.is_file():          # merge: keep the entries of documents not re-run
+        done = {entry["file"] for entry in summary}
+        previous = json.loads(summary_path.read_text(encoding="utf-8"))
+        summary = [entry for entry in previous if entry.get("file") not in done] + summary
+    summary_path.write_text(json.dumps(summary, indent=2) + "\n", encoding="utf-8")
     print("\nsaved to", out_dir)
     return summary
 
@@ -82,4 +98,4 @@ def run(folder: Path, out_name: str = "results") -> list:
 if __name__ == "__main__":
     if len(sys.argv) < 2:
         sys.exit(__doc__)
-    run(Path(sys.argv[1]).resolve(), sys.argv[2] if len(sys.argv) > 2 else "results")
+    run(Path(sys.argv[1]).resolve(), sys.argv[2] if len(sys.argv) > 2 else "results", sys.argv[3:] or None)

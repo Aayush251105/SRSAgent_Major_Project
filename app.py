@@ -128,6 +128,8 @@ def main(input_data, progress_callback=None, report=None):
             "warnings": segmentation.warnings,
             "toc_lines": segmentation.toc_lines,
             "duplicates": segmentation.duplicates,
+            "repeated_ids": segmentation.repeated_ids,
+            "code_blocks": segmentation.code_blocks,
         }
         if progress_callback:
             progress_callback("segmentation", {

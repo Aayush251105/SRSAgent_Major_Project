@@ -28,20 +28,29 @@ those labeled requirements. For literal plain-text input, `type` is `other` and
   - skipped sections are purpose, scope, definitions/glossary, audience, references, product overview, assumptions, risks, future enhancements, revision history, contents and appendix;
   - report-style sections that follow the specification are skipped too: implementation and testing, test plans and results, results and discussion, evaluation, conclusion, summary, acknowledgements, bibliography. Risky words ("Results", "Discussion", "Testing") are skipped only when they are the whole title, so "Search Results" or "Discussion Forum" stay;
   - tables of contents are skipped: a "Table of Contents" title, dot-leader lines (`Purpose ........ 4`, `Methodology……15`) and page-numbered entries inside a contents list. Entries never become headings;
-  - running PDF headers and footers (lines repeating at the top or bottom of most pages, ignoring page numbers) are removed before segmentation;
-  - a heading that mentions requirements is never skipped;
+  - project-management and metadata sections are skipped: project plan, timeline, milestones, work allocation, contribution matrix, team, budget, tools and technologies, document control; so are verification reports and acceptance checklists (their ID'd items are merged, see *Repeated IDs*);
+  - only reference-type sections (appendix, references, glossary, revision history, contents, traceability, testing/results, project plan) skip their subsections. A generic one ("2 System Overview", "Product Perspective") skips only its own text, so "2.4 User Stories" under it is kept;
+  - running PDF headers and footers (lines repeating at the top or bottom of most pages, ignoring page numbers) are removed before segmentation, and letter-spaced PDF text (`p r e s c r i b e d`) and words hyphenated across line breaks are rejoined;
+  - Markdown fenced code blocks (code, commands, ASCII diagrams) are skipped and listed under `code_blocks`;
+  - numbered table cells (`1 Critical (5%)`, `1 Sprint 1`) are not mistaken for headings;
+  - a heading that mentions requirements is never skipped, except a **traceability matrix**: it maps requirements to code, which is what the traceability pipeline must find on its own;
   - text with an explicit ID is never skipped;
   - all skipped content is listed in the extraction report, so it can be reviewed.
 - **Missing lists.** An introduction ending in ":" with nothing after it is reported as a warning, because the content it announces is missing. An unlabelled one-line introduction of that kind ("The following documents shall be prepared:") is not extracted; the warning says so (`dropped: true`).
-- **Strict IDs.** An ID needs a label separator or a known prefix (FR, NFR, REQ, …), so `SHA-256 hashing shall …` or `UTF-8 …` are not taken as IDs. Document part numbers (`Section-2`, `Figure-3`, `Step-1`, `Version-2`, …) are never IDs.
+- **Strict IDs.** An ID needs a label separator or a known prefix (FR, NFR, REQ, …), so `SHA-256 hashing shall …` or `UTF-8 …` are not taken as IDs. Document part numbers (`Section-2`, `Figure-3`, `Step-1`, `Version-2`, …) are never IDs. IDs may have word segments (`FR-AUTH-01`, `NFR-SEC-2`), and a known prefix followed directly by 3+ digits is an ID (`US001`); shorter compact labels such as `REQ1` are not, because templates repeat them under every feature.
 - **Sub-IDs.** `Req-1/2` and `FR-3.1` are IDs; they get `parent_requirement_id` `Req-1` / `FR-3` when that ID appears earlier in the document.
 - **Duplicates.** A requirement whose text repeats an earlier one (ignoring case and punctuation) is dropped and listed under `duplicates`. Two different source IDs with the same text are both kept.
+- **Repeated IDs.** When a source ID appears again with different text (listed under `repeated_ids`):
+  - in an acceptance / verification / test section the text is merged into the first occurrence;
+  - a row that maps the requirement to source files (`FR-1 Secure Auth accounts/models.py …`) is dropped;
+  - anywhere else the later one is renamed `<id>-2`, `<id>-3`, … so IDs stay unique.
+- **Use cases.** Under a heading, use-case template fields (`Actors:`, `Preconditions:`, `Postconditions:`, `Main flow:`, …) and their bullets form one requirement named after the use case (`Use case: View medical history`).
 
 The detector recognizes common functional wording and non-functional quality attributes, such as response time, availability, reliability, security, accessibility and measurable limits.
 
 Every run also writes `<input>_extraction_report.json`, which contains:
 - the skipped sections, with their text, and the skipped table-of-contents lines (`toc_lines`);
-- dropped duplicates (`duplicates`);
+- dropped duplicates (`duplicates`), merged / renamed / dropped repeated IDs (`repeated_ids`) and skipped code blocks (`code_blocks`);
 - the skipped tables;
 - missing-list warnings;
 - the candidate judge's review items;

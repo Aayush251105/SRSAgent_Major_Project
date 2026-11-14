@@ -146,3 +146,102 @@ def test_markdown_and_text_files_are_read_as_documents(tmp_path):
     document = app.parse_input(adapted["data"], adapted["type"])
     assert document["file_name"] == "spec.md" and "FR-1" in document["text"]
     assert InputAdapter().detect(str(md.with_suffix(".txt").write_text("x") and md.with_suffix(".txt"))) == "textfile"
+
+
+# --- round 2: ProClinic, Health Management System, NexusERP, Travel Agency ---
+
+
+@pytest.mark.parametrize("text, rid", [
+    ("FR-AUTH-01 (User Registration): Any guest can register", "FR-AUTH-01"),
+    ("- NFR-SEC-2: Passwords shall be hashed", "NFR-SEC-2"),
+    ("US001 Admin Manage system roles", "US001"),          # known prefix + 3 digits
+    ("REQ1: The functional requirements of preprocessing", None),   # template label, not unique
+    ("UTF-8 encoding shall be used", None),
+])
+def test_word_segment_and_compact_ids(text, rid):
+    assert leading_requirement_id(text) == rid
+
+
+def test_generic_skipped_section_does_not_hide_its_subsections():
+    segs, _ = segments_of(
+        "2 System Overview\n"
+        "The system is a clinic platform.\n"
+        "2.3 Future Enhancements\n"
+        "Telemedicine module.\n"
+        "2.4 User Stories\n"
+        "US001 Admin Manage system roles so that I can control permissions.\n"
+        "8 Appendix: API Endpoints\n"
+        "8.1 Auth\n"
+        "POST /api/auth/login/ authenticates a user.\n"
+    )
+    assert [s.requirement_id for s in segs] == ["US001"]
+
+
+def test_repeated_ids_merge_acceptance_criteria_and_drop_code_maps():
+    segs, report = segments_of(
+        "3 Requirements Specification\n"
+        "FR-1 Secure Auth Authentication using system credentials.\n"
+        "FR-2 Conflict Check Rejects double booking.\n"
+        "3.1 Acceptance Criteria\n"
+        "FR-1: Users can register and log in; passwords are hashed with Argon2.\n"
+        "4.2 Phases\n"
+        "FR-1 Secure Auth accounts/models.py accounts/tests.py\n"
+    )
+    by_id = {s.requirement_id: s for s in segs}
+    assert list(by_id) == ["FR-1", "FR-2"]
+    assert "Argon2" in by_id["FR-1"].text and "models.py" not in by_id["FR-1"].text
+    assert [r["action"].split()[0] for r in report.repeated_ids] == ["merged", "dropped:"]
+
+
+def test_reused_template_ids_are_renamed_not_merged():
+    segs, report = segments_of(
+        "4.1 Car availability\n"
+        "REQ-1: The customer can ask whether a car is available.\n"
+        "4.2 Waiting list\n"
+        "REQ-1: The customer can join a waiting list.\n"
+    )
+    assert [s.requirement_id for s in segs] == ["REQ-1", "REQ-1-2"]
+
+
+def test_traceability_matrix_is_skipped_even_though_it_mentions_requirements():
+    assert is_skip_section("5 Requirements Traceability Matrix (RTM)")
+    assert is_skip_section("9. Verification & Acceptance Criteria")
+    assert is_skip_section("4 Project Plan") and is_skip_section("6 Tools and Technologies")
+    assert not is_skip_section("3.2 Email Verification")
+
+
+def test_use_case_fields_are_grouped_under_the_use_case_title():
+    segs, _ = segments_of(
+        "4.1.3 View\n"
+        "medical history\n"
+        "Actors:\n"
+        "- Patient\n"
+        "Preconditions:\n"
+        "- The patient is logged in.\n"
+        "Postconditions:\n"
+        "- The patient's history is shown.\n"
+        "4.1.4 Logout\n"
+    )
+    assert len(segs) == 1
+    assert segs[0].text.startswith("Use case: View medical history")
+    assert "Postconditions:" in segs[0].text and "- Patient" in segs[0].text
+
+
+def test_markdown_code_blocks_are_skipped():
+    segs, report = segments_of(
+        "## 6. Architecture\n"
+        "```\n[User] --> [Agent] shall call tools\n```\n"
+        "FR-1: The system shall log in users.\n"
+    )
+    assert [s.requirement_id for s in segs] == ["FR-1"] and len(report.code_blocks) == 1
+
+
+def test_table_cells_are_not_headings_and_pdf_text_is_repaired():
+    pages = [{"page": 1, "text": "FR-1 Secure Auth Authentication using system cre-\n"
+                                 "dentials; passwords hashed.\n"
+                                 "1 Critical (5%)\n"
+                                 "Use case: m e d i c i n e s prescribed"}]
+    blocks = blocks_from_pdf({"pages": pages})
+    assert all(b.kind != "heading" for b in blocks)
+    text = " ".join(b.text for b in blocks)
+    assert "credentials;" in text and "medicines prescribed" in text
