@@ -275,6 +275,6 @@ class RequirementDetector:
             for pattern in RequirementDetector.REQUIREMENT_PATTERNS
         )
 
-    def detect_text(self, text: str) -> List[Dict]:
+    def detect_text(self, text: str, file_name: Optional[str] = None) -> List[Dict]:
         """Detect requirements in plain text or Markdown using the same rules as files."""
-        return self._from_blocks(blocks_from_text(text), {})
+        return self._from_blocks(blocks_from_text(text), {"file_name": file_name} if file_name else {})

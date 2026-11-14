@@ -2,6 +2,7 @@ import json
 import sys
 import threading
 import time
+from pathlib import Path
 
 from config import LLMConfig
 from agents.srs_agent import SRSAgent
@@ -48,6 +49,13 @@ def parse_input(input_data, input_type):
             "text": input_data
         }
 
+    if input_type == "textfile":
+        path = Path(input_data)
+        return {
+            "text": path.read_text(encoding="utf-8-sig", errors="replace"),
+            "file_name": path.name,
+        }
+
     raise ValueError(f"Unsupported input type: {input_type}")
 
 
@@ -91,7 +99,7 @@ def main(input_data, progress_callback=None, report=None):
             "truncated": len(extracted_text or "") > 2000,
         })
 
-    if input_type == "text" and not document["text"].strip():
+    if input_type in {"text", "textfile"} and not document["text"].strip():
         raise ValueError("Input text is empty")
     if input_type == "pdf" and not document["text"].strip():
         raise ValueError(
@@ -107,7 +115,7 @@ def main(input_data, progress_callback=None, report=None):
             input_type
         )
     else:
-        candidates = detector.detect_text(document["text"])
+        candidates = detector.detect_text(document["text"], file_name=document.get("file_name"))
 
     for candidate in candidates:
         candidate["input_kind"] = "text" if input_type == "text" else "document"
@@ -118,6 +126,8 @@ def main(input_data, progress_callback=None, report=None):
             "skipped_sections": segmentation.skipped_sections,
             "skipped_tables": segmentation.skipped_tables,
             "warnings": segmentation.warnings,
+            "toc_lines": segmentation.toc_lines,
+            "duplicates": segmentation.duplicates,
         }
         if progress_callback:
             progress_callback("segmentation", {
@@ -398,7 +408,7 @@ if __name__ == "__main__":
     from pathlib import Path
 
     parser = argparse.ArgumentParser(description="Extract requirements from SRS text or a PDF/DOCX file.")
-    parser.add_argument("input", help="Plain text, or a path to a .pdf/.docx file")
+    parser.add_argument("input", help="Plain text, or a path to a .pdf/.docx/.md/.txt file")
     args = parser.parse_args()
 
     # A single CLI string that names an existing file is treated as a path;
@@ -417,7 +427,7 @@ if __name__ == "__main__":
     output_dir = Path(__file__).resolve().parent / "output"
     output_dir.mkdir(parents=True, exist_ok=True)
     input_type = InputAdapter().detect(args.input)
-    output_stem = Path(args.input).stem if input_type in {"pdf", "docx"} else "text_input"
+    output_stem = Path(args.input).stem if input_type in {"pdf", "docx", "textfile"} else "text_input"
     output_path = output_dir / f"{output_stem}_requirements.txt"
     output_path.write_text(output_text + "\n", encoding="utf-8")
 

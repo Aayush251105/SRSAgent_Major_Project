@@ -11,6 +11,9 @@ class InputAdapter:
     SUPPORTED_FILE_TYPES = {
         ".pdf": "pdf",
         ".docx": "docx",
+        ".md": "textfile",          # a Markdown / plain-text *document*: read, then
+        ".markdown": "textfile",    # segmented like literal text, but its requirements
+        ".txt": "textfile",         # are typed as a document's (not as 'other')
     }
 
     def detect(self, input_data: Any) -> str:

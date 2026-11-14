@@ -1,6 +1,6 @@
 # SRSAgent V1
 
-Extract requirement records from plain text, selectable-text PDFs, and DOCX files.
+Extract requirement records from plain text, selectable-text PDFs, DOCX, and Markdown / plain-text files (`.md`, `.txt`).
 The program returns a JSON array in source order and assigns IDs as `REQ-001`,
 `REQ-002`, and so on.
 
@@ -26,16 +26,22 @@ those labeled requirements. For literal plain-text input, `type` is `other` and
 - **Requirement tables.** A table with an ID column (`ID | Type | Requirement`) gives one requirement per row.
 - **Skipped content.** Non-requirement sections and key/value tables (document metadata, glossaries) are skipped:
   - skipped sections are purpose, scope, definitions/glossary, audience, references, product overview, assumptions, risks, future enhancements, revision history, contents and appendix;
+  - report-style sections that follow the specification are skipped too: implementation and testing, test plans and results, results and discussion, evaluation, conclusion, summary, acknowledgements, bibliography. Risky words ("Results", "Discussion", "Testing") are skipped only when they are the whole title, so "Search Results" or "Discussion Forum" stay;
+  - tables of contents are skipped: a "Table of Contents" title, dot-leader lines (`Purpose ........ 4`, `Methodology……15`) and page-numbered entries inside a contents list. Entries never become headings;
+  - running PDF headers and footers (lines repeating at the top or bottom of most pages, ignoring page numbers) are removed before segmentation;
   - a heading that mentions requirements is never skipped;
   - text with an explicit ID is never skipped;
   - all skipped content is listed in the extraction report, so it can be reviewed.
-- **Missing lists.** An introduction ending in ":" with nothing after it is reported as a warning, because the content it announces is missing.
-- **Strict IDs.** An ID needs a label separator or a known prefix (FR, NFR, REQ, …), so `SHA-256 hashing shall …` or `UTF-8 …` are not taken as IDs.
+- **Missing lists.** An introduction ending in ":" with nothing after it is reported as a warning, because the content it announces is missing. An unlabelled one-line introduction of that kind ("The following documents shall be prepared:") is not extracted; the warning says so (`dropped: true`).
+- **Strict IDs.** An ID needs a label separator or a known prefix (FR, NFR, REQ, …), so `SHA-256 hashing shall …` or `UTF-8 …` are not taken as IDs. Document part numbers (`Section-2`, `Figure-3`, `Step-1`, `Version-2`, …) are never IDs.
+- **Sub-IDs.** `Req-1/2` and `FR-3.1` are IDs; they get `parent_requirement_id` `Req-1` / `FR-3` when that ID appears earlier in the document.
+- **Duplicates.** A requirement whose text repeats an earlier one (ignoring case and punctuation) is dropped and listed under `duplicates`. Two different source IDs with the same text are both kept.
 
 The detector recognizes common functional wording and non-functional quality attributes, such as response time, availability, reliability, security, accessibility and measurable limits.
 
 Every run also writes `<input>_extraction_report.json`, which contains:
-- the skipped sections, with their text;
+- the skipped sections, with their text, and the skipped table-of-contents lines (`toc_lines`);
+- dropped duplicates (`duplicates`);
 - the skipped tables;
 - missing-list warnings;
 - the candidate judge's review items;
@@ -49,6 +55,13 @@ If extracting a requirement fails twice, the failure is recorded there and the r
 ```powershell
 .\.venv\Scripts\python.exe -m pytest tests                     # no LLM needed
 .\.venv\Scripts\python.exe tools\evaluate_extraction.py output\SRS_Library_Management_System_requirements.txt ..\library_traceability_dataset\gold_standard\gold_standard_mapping.json
+```
+
+To run the agent on a whole folder of SRS documents (no database involved), saving the results next to them (`results` by default, or the folder name given):
+
+```powershell
+.\.venv\Scripts\python.exe tools\run_folder.py ..\SRSAgent_test
+.\.venv\Scripts\python.exe tools\run_folder.py ..\SRSAgent_test results_v2
 ```
 
 The evaluation reports:
