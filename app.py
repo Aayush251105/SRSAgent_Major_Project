@@ -2,6 +2,7 @@ import json
 import sys
 import threading
 import time
+from pathlib import Path
 
 from config import LLMConfig
 from agents.srs_agent import SRSAgent
@@ -48,11 +49,27 @@ def parse_input(input_data, input_type):
             "text": input_data
         }
 
+    if input_type == "textfile":
+        path = Path(input_data)
+        return {
+            "text": path.read_text(encoding="utf-8-sig", errors="replace"),
+            "file_name": path.name,
+        }
+
     raise ValueError(f"Unsupported input type: {input_type}")
 
 
-def main(input_data, progress_callback=None):
+def main(input_data, progress_callback=None, report=None):
+    """
+    Extract requirements from text or a PDF/DOCX path.
+
+    report: optional dict, filled with what the run skipped, warned about or
+    failed on (segmentation report, judge decisions, extraction failures,
+    counts), so nothing is dropped silently.
+    """
     config = LLMConfig()
+    if report is None:
+        report = {}
 
     adapter = InputAdapter()
     adapted_input = adapter.adapt(input_data)
@@ -82,7 +99,7 @@ def main(input_data, progress_callback=None):
             "truncated": len(extracted_text or "") > 2000,
         })
 
-    if input_type == "text" and not document["text"].strip():
+    if input_type in {"text", "textfile"} and not document["text"].strip():
         raise ValueError("Input text is empty")
     if input_type == "pdf" and not document["text"].strip():
         raise ValueError(
@@ -98,10 +115,31 @@ def main(input_data, progress_callback=None):
             input_type
         )
     else:
-        candidates = detector.detect_text(document["text"])
+        candidates = detector.detect_text(document["text"], file_name=document.get("file_name"))
 
     for candidate in candidates:
         candidate["input_kind"] = "text" if input_type == "text" else "document"
+
+    segmentation = detector.last_report
+    if segmentation is not None:
+        report["segmentation"] = {
+            "skipped_sections": segmentation.skipped_sections,
+            "skipped_tables": segmentation.skipped_tables,
+            "warnings": segmentation.warnings,
+            "toc_lines": segmentation.toc_lines,
+            "duplicates": segmentation.duplicates,
+            "repeated_ids": segmentation.repeated_ids,
+            "code_blocks": segmentation.code_blocks,
+        }
+        if progress_callback:
+            progress_callback("segmentation", {
+                "candidates": len(candidates),
+                "labelled": sum(1 for c in candidates if c.get("source_requirement_id")),
+                "skipped_sections": segmentation.skipped_sections,
+                "skipped_tables": segmentation.skipped_tables,
+                "warnings": segmentation.warnings,
+            })
+    report["counts"] = {"candidates": len(candidates)}
 
     if not candidates:
         if progress_callback:
@@ -154,6 +192,14 @@ def main(input_data, progress_callback=None):
         })
 
     requirements = agent.extract(candidates, progress_callback=progress_callback)
+    report["extraction_failures"] = agent.failures
+    report["counts"].update(retained=len(candidates), extracted=len(requirements),
+                            failed=len(agent.failures))
+    if agent.failures and progress_callback:
+        progress_callback("stage", {
+            "message": f"{len(agent.failures)} candidate(s) could not be extracted after retries; "
+                       "they are listed in the extraction report"
+        })
 
     return requirements
 
@@ -238,6 +284,25 @@ class TerminalProgress:
     def __call__(self, event, payload):
         if event == "stage":
             print(f"[step] {payload['message']}", file=sys.stderr, flush=True)
+        elif event == "segmentation":
+            print(
+                f"[step] Structure: {payload['candidates']} candidate(s), "
+                f"{payload['labelled']} with a source requirement ID",
+                file=sys.stderr,
+            )
+            for section in payload["skipped_sections"]:
+                print(
+                    f"  skipped section (not requirements): {section['heading']} "
+                    f"({len(section.get('items', []))} item(s))",
+                    file=sys.stderr,
+                )
+            for table in payload["skipped_tables"]:
+                print(f"  skipped table: {table['reason']} {table['first_row']}", file=sys.stderr)
+            for warning in payload["warnings"]:
+                print(
+                    f"  [warning] {warning.get('requirement_id') or 'unlabelled'}: {warning['message']}",
+                    file=sys.stderr,
+                )
         elif event == "parsed_preview":
             print("[step] Parsed text preview:", file=sys.stderr)
             print(payload["text"], file=sys.stderr)
@@ -345,13 +410,14 @@ if __name__ == "__main__":
     from pathlib import Path
 
     parser = argparse.ArgumentParser(description="Extract requirements from SRS text or a PDF/DOCX file.")
-    parser.add_argument("input", help="Plain text, or a path to a .pdf/.docx file")
+    parser.add_argument("input", help="Plain text, or a path to a .pdf/.docx/.md/.txt file")
     args = parser.parse_args()
 
     # A single CLI string that names an existing file is treated as a path;
     # otherwise it is processed as literal plain text.
     progress = TerminalProgress()
-    result = main(args.input, progress_callback=progress)
+    run_report = {}
+    result = main(args.input, progress_callback=progress, report=run_report)
     progress.finish(len(result))
 
     output_text = json.dumps(
@@ -363,7 +429,7 @@ if __name__ == "__main__":
     output_dir = Path(__file__).resolve().parent / "output"
     output_dir.mkdir(parents=True, exist_ok=True)
     input_type = InputAdapter().detect(args.input)
-    output_stem = Path(args.input).stem if input_type in {"pdf", "docx"} else "text_input"
+    output_stem = Path(args.input).stem if input_type in {"pdf", "docx", "textfile"} else "text_input"
     output_path = output_dir / f"{output_stem}_requirements.txt"
     output_path.write_text(output_text + "\n", encoding="utf-8")
 
@@ -371,7 +437,13 @@ if __name__ == "__main__":
     review_text = json.dumps(progress.review_items, indent=2, ensure_ascii=False)
     review_path.write_text(review_text + "\n", encoding="utf-8")
 
+    run_report["candidate_review"] = progress.review_items
+    report_path = output_dir / f"{output_stem}_extraction_report.json"
+    report_path.write_text(json.dumps(run_report, indent=2, ensure_ascii=False, default=str) + "\n",
+                           encoding="utf-8")
+
     print(f"[saved] Full JSON-formatted text output: {output_path}", file=sys.stderr)
+    print(f"[saved] Extraction report (skipped, warnings, failures): {report_path}", file=sys.stderr)
     print(
         f"[saved] Candidate review items ({len(progress.review_items)}): {review_path}",
         file=sys.stderr,
