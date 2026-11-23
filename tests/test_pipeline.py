@@ -75,7 +75,7 @@ def test_generated_ids_never_collide_with_source_ids():
 
 
 def test_main_end_to_end_with_report(monkeypatch):
-    monkeypatch.setattr(app, "create_provider", lambda config, model_override=None: FakeProvider())
+    monkeypatch.setattr(app, "create_provider", lambda config, model_override=None, think=None: FakeProvider())
     report = {}
     reqs = app.main(str(LIBRARY_DOCX), report=report)
     labelled = [r.requirement_id for r in reqs if r.id_source == "source"]

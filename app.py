@@ -15,13 +15,15 @@ from parsers.docx_parser import DOCXParser
 from processors.requirement_detector import RequirementDetector
 
 
-def create_provider(config: LLMConfig, model_override: str | None = None):
-    """Create the configured LLM provider."""
+def create_provider(config: LLMConfig, model_override: str | None = None,
+                    think: bool | None = None):
+    """Create the configured LLM provider (think: Ollama thinking switch, None = model default)."""
 
     if config.provider == "ollama":
         return OllamaProvider(
             model=model_override or config.model,
-            host=config.ollama_host
+            host=config.ollama_host,
+            think=think,
         )
 
     if config.provider == "grok":
@@ -149,9 +151,9 @@ def main(input_data, progress_callback=None, report=None):
     if progress_callback:
         progress_callback("candidates", {"candidates": candidates})
 
-    provider = create_provider(config)
+    provider = create_provider(config, think=config.think)
     if config.provider == "ollama":
-        judge_model = config.judge_model or "qwen2.5:3b"
+        judge_model = config.judge_model or "qwen3:4b"
     else:
         judge_model = config.model
     if progress_callback:
@@ -162,7 +164,7 @@ def main(input_data, progress_callback=None, report=None):
             )
         })
 
-    judge_provider = create_provider(config, model_override=judge_model)
+    judge_provider = create_provider(config, model_override=judge_model, think=config.judge_think)
     fallback_provider = provider if judge_model != config.model else None
     candidate_judge = CandidateJudge(judge_provider, fallback_provider=fallback_provider)
     candidates = candidate_judge.filter_candidates(

@@ -20,11 +20,15 @@ class OllamaProvider(LLMProvider):
         temperature: float = 0.0,
         seed: int = 42,
         num_ctx: int = 8192,
+        think: bool | None = None,
     ):
         self.model = model
         self.client = Client(host=host)
         # Deterministic decoding: the same SRS yields the same requirements.
         self.options = {"temperature": temperature, "seed": seed, "num_ctx": num_ctx}
+        # Thinking models (e.g. qwen3): False disables the hidden reasoning
+        # pass. None sends nothing, so other models are unaffected.
+        self.think = think
 
     def generate_structured(
         self,
@@ -41,6 +45,7 @@ class OllamaProvider(LLMProvider):
             ],
             format=schema.model_json_schema(),
             options=self.options,
+            **({} if self.think is None else {"think": self.think}),
         )
 
         return schema.model_validate_json(
